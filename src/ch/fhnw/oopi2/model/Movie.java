@@ -1,168 +1,87 @@
 package ch.fhnw.oopi2.model;
 
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- * Created by ajant on 03.05.2016.
+ * Created by Ajanth on 06.06.2016.
  */
-public class Movie {
-    private final IntegerProperty id = new SimpleIntegerProperty(0);
-    private final StringProperty title = new SimpleStringProperty("");
-    private final IntegerProperty yearOfAward = new SimpleIntegerProperty(0);
-    private final StringProperty director =  new SimpleStringProperty("");
-    private final StringProperty titleEnglish = new SimpleStringProperty("");
-    private final IntegerProperty yearOfProduction = new SimpleIntegerProperty(0);
-    private final StringProperty country = new SimpleStringProperty("");
-    private final IntegerProperty duration = new SimpleIntegerProperty(0);
-    private final IntegerProperty fsk = new SimpleIntegerProperty(0);
-    private final StringProperty genre =  new SimpleStringProperty("");
-    private final StringProperty startDate = new SimpleStringProperty("");
-    private final IntegerProperty numberOfOscars = new SimpleIntegerProperty(0);
+public interface Movie {
+    int getId();
 
-    public int getId() {
-        return id.get();
-    }
+    IntegerProperty idProperty();
 
-    public IntegerProperty idProperty() {
-        return id;
-    }
+    void setId(int id);
 
-    public void setId(int id) {
-        this.id.set(id);
-    }
+    String getTitle();
 
-    public String getTitle() {
-        return title.get();
-    }
+    StringProperty titleProperty();
 
-    public StringProperty titleProperty() {
-        return title;
-    }
+    void setTitle(String title);
 
-    public void setTitle(String title) {
-        this.title.set(title);
-    }
+    int getYearOfAward();
 
-    public int getYearOfAward() {
-        return yearOfAward.get();
-    }
+    IntegerProperty yearOfAwardProperty();
 
-    public IntegerProperty yearOfAwardProperty() {
-        return yearOfAward;
-    }
+    void setYearOfAward(int yearOfAward);
 
-    public void setYearOfAward(int yearOfAward) {
-        this.yearOfAward.set(yearOfAward);
-    }
+    String getDirector();
 
-    public String getDirector() {
-        return director.get();
-    }
+    StringProperty directorProperty();
 
-    public StringProperty directorProperty() {
-        return director;
-    }
+    void setDirector(String director);
 
-    public void setDirector(String director) {
-        this.director.set(director);
-    }
+    String getMainActor();
 
-    public String getTitleEnglish() {
-        return titleEnglish.get();
-    }
+    StringProperty mainActorProperty();
 
-    public StringProperty titleEnglishProperty() {
-        return titleEnglish;
-    }
+    void setMainActor(String mainActor);
 
-    public void setTitleEnglish(String titleEnglish) {
-        this.titleEnglish.set(titleEnglish);
-    }
+    String getTitleEnglish();
 
-    public int getYearOfProduction() {
-        return yearOfProduction.get();
-    }
+    StringProperty titleEnglishProperty();
 
-    public IntegerProperty yearOfProductionProperty() {
-        return yearOfProduction;
-    }
+    void setTitleEnglish(String titleEnglish);
 
-    public void setYearOfProduction(int yearOfProduction) {
-        this.yearOfProduction.set(yearOfProduction);
-    }
+    int getYearOfProduction();
 
-    public String getCountry() {
-        return country.get();
-    }
+    IntegerProperty yearOfProductionProperty();
 
-    public StringProperty countryProperty() {
-        return country;
-    }
+    void setYearOfProduction(int yearOfProduction);
 
-    public void setCountry(String country) {
-        this.country.set(country);
-    }
+    String getCountry();
 
-    public int getDuration() {
-        return duration.get();
-    }
+    StringProperty countryProperty();
 
-    public IntegerProperty durationProperty() {
-        return duration;
-    }
+    void setCountry(String country);
 
-    public void setDuration(int duration) {
-        this.duration.set(duration);
-    }
+    int getDuration();
 
-    public int getFsk() {
-        return fsk.get();
-    }
+    IntegerProperty durationProperty();
 
-    public IntegerProperty fskProperty() {
-        return fsk;
-    }
+    void setDuration(int duration);
 
-    public void setFsk(int fsk) {
-        this.fsk.set(fsk);
-    }
+    int getFsk();
 
-    public String getGenre() {
-        return genre.get();
-    }
+    IntegerProperty fskProperty();
 
-    public StringProperty genreProperty() {
-        return genre;
-    }
+    void setFsk(int fsk);
 
-    public void setGenre(String genre) {
-        this.genre.set(genre);
-    }
+    String getGenre();
 
-    public String getStartDate() {
-        return startDate.get();
-    }
+    StringProperty genreProperty();
 
-    public StringProperty startDateProperty() {
-        return startDate;
-    }
+    void setGenre(String genre);
 
-    public void setStartDate(String startDate) {
-        this.startDate.set(startDate);
-    }
+    String getStartDate();
 
-    public int getNumberOfOscars() {
-        return numberOfOscars.get();
-    }
+    StringProperty startDateProperty();
 
-    public IntegerProperty numberOfOscarsProperty() {
-        return numberOfOscars;
-    }
+    void setStartDate(String startDate);
 
-    public void setNumberOfOscars(int numberOfOscars) {
-        this.numberOfOscars.set(numberOfOscars);
-    }
+    int getNumberOfOscars();
+
+    IntegerProperty numberOfOscarsProperty();
+
+    void setNumberOfOscars(int numberOfOscars);
 }

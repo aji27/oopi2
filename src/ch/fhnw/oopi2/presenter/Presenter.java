@@ -8,10 +8,15 @@ import ch.fhnw.oopi2.view.ApplicationView;
  */
 public class Presenter {
 
-    private final ApplicationView _view = null;
-    private final MovieRepository _repository = null;
+    private final ApplicationView _view;
+    private final MovieRepository _repository;
 
     public Presenter(ApplicationView view, MovieRepository repository) {
+        _view = view;
+        _repository = repository;
+    }
 
+    public void initialize() {
+        _view.setItems(_repository.getAll());
     }
 }
