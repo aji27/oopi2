@@ -1,6 +1,9 @@
 package ch.fhnw.oopi2.view;
 
 import ch.fhnw.oopi2.model.Movie;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -8,7 +11,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.util.Callback;
+import javafx.util.converter.NumberStringConverter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -124,7 +129,7 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         tcYear.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Movie, Integer>, ObservableValue<Integer>>() {
             @Override
             public ObservableValue<Integer> call(TableColumn.CellDataFeatures<Movie, Integer> p) {
-                return p.getValue().yearOfProductionProperty().asObject();
+                return p.getValue().yearOfAwardProperty().asObject();
             }
         });
         _tableView.getColumns().add(tcYear);
@@ -192,6 +197,8 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _gpMovie.add(_ivOscars, 0, 4, 3, 1);
 
         _spYear = new Spinner<>();
+        _spYear
+            .setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1929, LocalDateTime.now().getYear()));
         _gpMovie.add(new Label("Jahr"), 0, 5);
         _gpMovie.add(_spYear, 1, 5);
 
@@ -216,6 +223,8 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _gpMovie.add(_tfGenre, 1, 10);
 
         _spProductionYear = new Spinner();
+        _spProductionYear
+                .setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1929, LocalDateTime.now().getYear()));
         _gpMovie.add(new Label("Produktionsjahr"), 2, 10);
         _gpMovie.add(_spProductionYear, 3, 10);
 
@@ -224,6 +233,7 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _gpMovie.add(_tfCountry, 1, 11);
 
         _spDuration = new Spinner();
+        _spDuration.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 240));
         _gpMovie.add(new Label("Länge (Minuten)"), 2, 11);
         _gpMovie.add(_spDuration, 3, 11);
 
@@ -236,6 +246,7 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _gpMovie.add(_dpStartDate, 3, 12);
 
         _spNumberOfOscars = new Spinner<>();
+        _spNumberOfOscars.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 11));
         _gpMovie.add(new Label("Oscars"), 0, 13);
         _gpMovie.add(_spNumberOfOscars, 1, 13);
 
@@ -254,7 +265,88 @@ public class ApplicationUI extends GridPane implements ApplicationView {
 
     }
 
-    private void addBindings() {
+    private ObjectProperty<Integer> _tmpYearOfAwardProperty;
+    private ObjectProperty<Integer> _tmpYearOfProductionProperty;
+    private ObjectProperty<Integer> _tmpDurationProperty;
+    private ObjectProperty<Integer> _tmpNumberOfOscarsProperty;
 
+    private void addBindings() {
+        _tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Movie>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Movie> ov, Movie oldValue, Movie newValue) {
+                if (oldValue != null) {
+                    Bindings.unbindBidirectional(_lblYear.textProperty(), oldValue.yearOfAwardProperty());
+                    _lblTitle.textProperty().unbind();
+                    _lblDirector.textProperty().unbind();
+                    _lblMainActor.textProperty().unbind();
+
+                    _ivCountry.imageProperty().unbind();
+                    _ivPoster.imageProperty().unbind();
+                    _ivOscars.imageProperty().unbind();
+
+                    _tfTitle.textProperty().unbindBidirectional(oldValue.titleProperty());
+                    _tfDirector.textProperty().unbindBidirectional(oldValue.directorProperty());
+                    _tfMainActor.textProperty().unbindBidirectional(oldValue.mainActorProperty());
+                    _tfTitleEN.textProperty().unbindBidirectional(oldValue.titleEnglishProperty());
+                    _tfGenre.textProperty().unbindBidirectional(oldValue.genreProperty());
+                    _tfCountry.textProperty().unbindBidirectional(oldValue.countryProperty());
+
+                    if (_tmpYearOfAwardProperty != null) {
+                        _spYear.getValueFactory().valueProperty().unbindBidirectional(_tmpYearOfAwardProperty);
+                        _tmpYearOfAwardProperty = null;
+                    }
+                    if (_tmpYearOfProductionProperty != null) {
+                        _spProductionYear.getValueFactory().valueProperty().unbindBidirectional(_tmpYearOfProductionProperty);
+                        _tmpYearOfProductionProperty = null;
+                    }
+                    if (_tmpDurationProperty != null) {
+                        _spDuration.getValueFactory().valueProperty().unbindBidirectional(_tmpDurationProperty);
+                        _tmpDurationProperty = null;
+                    }
+                    if (_tmpNumberOfOscarsProperty != null) {
+                        _spNumberOfOscars.getValueFactory().valueProperty().unbindBidirectional(_tmpNumberOfOscarsProperty);
+                        _tmpNumberOfOscarsProperty = null;
+                    }
+
+                    _cbFSK.valueProperty().unbind();
+                    _dpStartDate.valueProperty().unbind();
+                }
+
+                if (newValue != null) {
+                    Bindings.bindBidirectional(_lblYear.textProperty(), newValue.yearOfAwardProperty(), new NumberStringConverter());
+                    _lblTitle.textProperty().bind(newValue.titleProperty());
+                    _lblDirector.textProperty().bind(newValue.directorProperty());
+                    _lblMainActor.textProperty().bind(newValue.mainActorProperty());
+
+                    _ivCountry.imageProperty().unbind();
+                    _ivPoster.imageProperty().unbind();
+                    _ivOscars.imageProperty().unbind();
+
+                    _tfTitle.textProperty().bindBidirectional(newValue.titleProperty());
+                    _tfDirector.textProperty().bindBidirectional(newValue.directorProperty());
+                    _tfMainActor.textProperty().bindBidirectional(newValue.mainActorProperty());
+                    _tfTitleEN.textProperty().bindBidirectional(newValue.titleEnglishProperty());
+                    _tfGenre.textProperty().bindBidirectional(newValue.genreProperty());
+                    _tfCountry.textProperty().bindBidirectional(newValue.countryProperty());
+
+                    _tmpYearOfAwardProperty = newValue.yearOfAwardProperty().asObject();
+                    _spYear.getValueFactory().valueProperty().bindBidirectional(_tmpYearOfAwardProperty);
+
+                    _tmpYearOfProductionProperty = newValue.yearOfProductionProperty().asObject();
+                    _spProductionYear.getValueFactory().valueProperty().bindBidirectional(_tmpYearOfProductionProperty);
+
+                    _tmpDurationProperty = newValue.durationProperty().asObject();
+                    _spDuration.getValueFactory().valueProperty().bindBidirectional(_tmpDurationProperty);
+
+                    _tmpNumberOfOscarsProperty = newValue.numberOfOscarsProperty().asObject();
+                    _spNumberOfOscars.getValueFactory().valueProperty().bindBidirectional(_tmpNumberOfOscarsProperty);
+
+                    //_cbFSK.valueProperty().bindBidirectional(newValue.fskProperty());
+
+                    //_dpStartDate.valueProperty().bindBidirectional(newValue.startDateProperty());
+                }
+            }
+        });
     }
 }
