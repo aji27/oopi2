@@ -5,10 +5,8 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -192,12 +190,11 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _gpMovie.add(_lblYear, 0, 0, 2, 1);
 
         _ivCountry = new ImageView();
-        final HBox hbCountry = new HBox(_ivCountry);
-        hbCountry.setAlignment(Pos.TOP_RIGHT);
-        _gpMovie.add(hbCountry, 2, 0);
-
+        final StackPane spCountry = new StackPane(_ivCountry);
+        spCountry.setPadding(new Insets(0,10,0,0));
+        spCountry.setAlignment(Pos.TOP_CENTER);
         _ivPoster = new ImageView();
-        final HBox hbPoster = new HBox(_ivPoster);
+        final HBox hbPoster = new HBox(spCountry, _ivPoster);
         hbPoster.setAlignment(Pos.TOP_RIGHT);
         _gpMovie.add(hbPoster, 3, 0, 1, 5);
 
@@ -213,14 +210,6 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _hbOscars = new HBox();
         _gpMovie.add(_hbOscars, 0, 4, 3, 1);
         GridPane.setHgrow(_hbOscars, Priority.ALWAYS);
-
-        final InputStream oscarResourceStream = getClass().getResourceAsStream("../res/view/javafx/Oscar-logo.png");
-        if (oscarResourceStream != null) {
-            for (int i = 1; i <= 5; i++) {
-                ImageView ivOscar = new ImageView(new Image(oscarResourceStream, 45, 114, true, true));
-                _hbOscars.getChildren().add(ivOscar);
-            }
-        }
 
         _spYear = new Spinner<>();
         _spYear
@@ -358,9 +347,12 @@ public class ApplicationUI extends GridPane implements ApplicationView {
 
                     final InputStream oscarResourceStream = getClass().getResourceAsStream("../res/view/javafx/Oscar-logo.png");
                     if (oscarResourceStream != null) {
+                        final Image oscarImage = new Image(oscarResourceStream, 30, 76, true, true);
                         for (int i = 1; i <= newValue.getNumberOfOscars(); i++) {
-                            ImageView ivOscar = new ImageView(new Image(oscarResourceStream, 45, 114, true, true));
-                            _hbOscars.getChildren().add(ivOscar);
+                            ImageView ivOscar = new ImageView(oscarImage);
+                            StackPane spOscar = new StackPane(ivOscar);
+                            spOscar.setPadding(new Insets(0,10,0,0));
+                            _hbOscars.getChildren().add(spOscar);
                         }
                     }
 
