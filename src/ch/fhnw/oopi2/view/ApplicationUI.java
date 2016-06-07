@@ -5,7 +5,10 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.util.Callback;
 import javafx.util.converter.NumberStringConverter;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,7 +41,7 @@ public class ApplicationUI extends GridPane implements ApplicationView {
     private Label _lblMainActor;
     private ImageView _ivCountry;
     private ImageView _ivPoster;
-    private ImageView _ivOscars;
+    private HBox _hbOscars;
     private Spinner<Integer> _spYear;
     private TextField _tfTitle;
     private TextField _tfDirector;
@@ -167,9 +171,18 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _gpMovie.setPadding(new Insets(10.0));
         _gpMovie.setHgap(10);
         _gpMovie.setVgap(10);
+        _gpMovie.setMaxWidth(Double.MAX_VALUE);
+
+        final HBox hbMovie = new HBox(_gpMovie);
+        HBox.setHgrow(_gpMovie, Priority.ALWAYS);
+
+        final ScrollPane spMovie = new ScrollPane(hbMovie);
+        spMovie.setMaxWidth(Double.MAX_VALUE);
+        spMovie.setFitToHeight(true);
+        spMovie.setFitToWidth(true);
 
         ColumnConstraints _gpCol = new ColumnConstraints();
-        _gpCol.setHgrow(Priority.SOMETIMES);
+        _gpCol.setHgrow(Priority.ALWAYS);
         _gpMovie.getColumnConstraints().add(_gpCol);
         _gpMovie.getColumnConstraints().add(_gpCol);
         _gpMovie.getColumnConstraints().add(_gpCol);
@@ -179,10 +192,14 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _gpMovie.add(_lblYear, 0, 0, 2, 1);
 
         _ivCountry = new ImageView();
-        _gpMovie.add(_ivCountry, 2, 0);
+        final HBox hbCountry = new HBox(_ivCountry);
+        hbCountry.setAlignment(Pos.TOP_RIGHT);
+        _gpMovie.add(hbCountry, 2, 0);
 
         _ivPoster = new ImageView();
-        _gpMovie.add(_ivPoster, 3, 1, 1, 4);
+        final HBox hbPoster = new HBox(_ivPoster);
+        hbPoster.setAlignment(Pos.TOP_RIGHT);
+        _gpMovie.add(hbPoster, 3, 0, 1, 5);
 
         _lblTitle = new Label();
         _gpMovie.add(_lblTitle, 0, 1, 3, 1);
@@ -193,8 +210,17 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _lblMainActor = new Label();
         _gpMovie.add(_lblMainActor, 0, 3, 3, 1);
 
-        _ivOscars = new ImageView();
-        _gpMovie.add(_ivOscars, 0, 4, 3, 1);
+        _hbOscars = new HBox();
+        _gpMovie.add(_hbOscars, 0, 4, 3, 1);
+        GridPane.setHgrow(_hbOscars, Priority.ALWAYS);
+
+        final InputStream oscarResourceStream = getClass().getResourceAsStream("../res/view/javafx/Oscar-logo.png");
+        if (oscarResourceStream != null) {
+            for (int i = 1; i <= 5; i++) {
+                ImageView ivOscar = new ImageView(new Image(oscarResourceStream, 45, 114, true, true));
+                _hbOscars.getChildren().add(ivOscar);
+            }
+        }
 
         _spYear = new Spinner<>();
         _spYear
@@ -250,7 +276,7 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _gpMovie.add(new Label("Oscars"), 0, 13);
         _gpMovie.add(_spNumberOfOscars, 1, 13);
 
-        _splitPane.getItems().add(_gpMovie);
+        _splitPane.getItems().add(spMovie);
     }
 
     private void layoutControls() {
@@ -275,15 +301,16 @@ public class ApplicationUI extends GridPane implements ApplicationView {
 
             @Override
             public void changed(ObservableValue<? extends Movie> ov, Movie oldValue, Movie newValue) {
+
+                _ivCountry.setImage(null);
+                _ivPoster.setImage(null);
+                _hbOscars.getChildren().clear();
+
                 if (oldValue != null) {
                     Bindings.unbindBidirectional(_lblYear.textProperty(), oldValue.yearOfAwardProperty());
                     _lblTitle.textProperty().unbind();
                     _lblDirector.textProperty().unbind();
                     _lblMainActor.textProperty().unbind();
-
-                    _ivCountry.imageProperty().unbind();
-                    _ivPoster.imageProperty().unbind();
-                    _ivOscars.imageProperty().unbind();
 
                     _tfTitle.textProperty().unbindBidirectional(oldValue.titleProperty());
                     _tfDirector.textProperty().unbindBidirectional(oldValue.directorProperty());
@@ -319,9 +346,23 @@ public class ApplicationUI extends GridPane implements ApplicationView {
                     _lblDirector.textProperty().bind(newValue.directorProperty());
                     _lblMainActor.textProperty().bind(newValue.mainActorProperty());
 
-                    _ivCountry.imageProperty().unbind();
-                    _ivPoster.imageProperty().unbind();
-                    _ivOscars.imageProperty().unbind();
+                    final InputStream countryResourceStream = getClass().getResourceAsStream(String.format("../res/view/javafx/flags/%s.png", newValue.getCountry()));
+                    if (countryResourceStream != null) {
+                        _ivCountry.setImage(new Image(countryResourceStream));
+                    }
+
+                    final InputStream posterResourceStream = getClass().getResourceAsStream(String.format("../res/view/javafx/posters/%s.jpg", newValue.getId()));
+                    if (posterResourceStream != null) {
+                        _ivPoster.setImage(new Image(posterResourceStream));
+                    }
+
+                    final InputStream oscarResourceStream = getClass().getResourceAsStream("../res/view/javafx/Oscar-logo.png");
+                    if (oscarResourceStream != null) {
+                        for (int i = 1; i <= newValue.getNumberOfOscars(); i++) {
+                            ImageView ivOscar = new ImageView(new Image(oscarResourceStream, 45, 114, true, true));
+                            _hbOscars.getChildren().add(ivOscar);
+                        }
+                    }
 
                     _tfTitle.textProperty().bindBidirectional(newValue.titleProperty());
                     _tfDirector.textProperty().bindBidirectional(newValue.directorProperty());
