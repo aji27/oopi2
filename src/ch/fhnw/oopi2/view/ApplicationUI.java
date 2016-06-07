@@ -26,6 +26,25 @@ public class ApplicationUI extends GridPane implements ApplicationView {
     private SplitPane _splitPane;
     private TableView _tableView;
     private GridPane _gpMovie;
+    private Label _lblYear;
+    private Label _lblTitle;
+    private Label _lblDirector;
+    private Label _lblMainActor;
+    private ImageView _ivCountry;
+    private ImageView _ivPoster;
+    private ImageView _ivOscars;
+    private Spinner<Integer> _spYear;
+    private TextField _tfTitle;
+    private TextField _tfDirector;
+    private TextField _tfMainActor;
+    private TextField _tfTitleEN;
+    private TextField _tfGenre;
+    private Spinner<Integer> _spProductionYear;
+    private TextField _tfCountry;
+    private Spinner<Integer> _spDuration;
+    private ComboBox<Integer> _cbFSK;
+    private DatePicker _dpStartDate;
+    private Spinner<Integer> _spNumberOfOscars;
 
     public ApplicationUI(){
         initializeControls();
@@ -140,6 +159,86 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _splitPane.getItems().add(_tableView);
 
         _gpMovie = new GridPane();
+        _gpMovie.setPadding(new Insets(10.0));
+        _gpMovie.setHgap(10);
+        _gpMovie.setVgap(10);
+
+        ColumnConstraints _gpCol = new ColumnConstraints();
+        _gpCol.setHgrow(Priority.SOMETIMES);
+        _gpMovie.getColumnConstraints().add(_gpCol);
+        _gpMovie.getColumnConstraints().add(_gpCol);
+        _gpMovie.getColumnConstraints().add(_gpCol);
+        _gpMovie.getColumnConstraints().add(_gpCol);
+
+        _lblYear = new Label();
+        _gpMovie.add(_lblYear, 0, 0, 2, 1);
+
+        _ivCountry = new ImageView();
+        _gpMovie.add(_ivCountry, 2, 0);
+
+        _ivPoster = new ImageView();
+        _gpMovie.add(_ivPoster, 3, 1, 1, 4);
+
+        _lblTitle = new Label();
+        _gpMovie.add(_lblTitle, 0, 1, 3, 1);
+
+        _lblDirector = new Label();
+        _gpMovie.add(_lblDirector, 0, 2, 3, 1);
+
+        _lblMainActor = new Label();
+        _gpMovie.add(_lblMainActor, 0, 3, 3, 1);
+
+        _ivOscars = new ImageView();
+        _gpMovie.add(_ivOscars, 0, 4, 3, 1);
+
+        _spYear = new Spinner<>();
+        _gpMovie.add(new Label("Jahr"), 0, 5);
+        _gpMovie.add(_spYear, 1, 5);
+
+        _tfTitle = new TextField();
+        _gpMovie.add(new Label("Titel"), 0, 6);
+        _gpMovie.add(_tfTitle, 1, 6, 3, 1);
+
+        _tfDirector = new TextField();
+        _gpMovie.add(new Label("Regisseur"), 0, 7);
+        _gpMovie.add(_tfDirector, 1, 7, 3, 1);
+
+        _tfMainActor = new TextField();
+        _gpMovie.add(new Label("Hauptdarsteller"), 0, 8);
+        _gpMovie.add(_tfMainActor, 1, 8, 3, 1);
+
+        _tfTitleEN = new TextField();
+        _gpMovie.add(new Label("englischer Titel"), 0, 9);
+        _gpMovie.add(_tfTitleEN, 1, 9, 3, 1);
+
+        _tfGenre = new TextField();
+        _gpMovie.add(new Label("Genre"), 0, 10);
+        _gpMovie.add(_tfGenre, 1, 10);
+
+        _spProductionYear = new Spinner();
+        _gpMovie.add(new Label("Produktionsjahr"), 2, 10);
+        _gpMovie.add(_spProductionYear, 3, 10);
+
+        _tfCountry = new TextField();
+        _gpMovie.add(new Label("Land"), 0, 11);
+        _gpMovie.add(_tfCountry, 1, 11);
+
+        _spDuration = new Spinner();
+        _gpMovie.add(new Label("Länge (Minuten)"), 2, 11);
+        _gpMovie.add(_spDuration, 3, 11);
+
+        _cbFSK = new ComboBox<>();
+        _gpMovie.add(new Label("FSK-Altersfreigabe"), 0, 12);
+        _gpMovie.add(_cbFSK, 1, 12);
+
+        _dpStartDate = new DatePicker();
+        _gpMovie.add(new Label("Kinostart"), 2, 12);
+        _gpMovie.add(_dpStartDate, 3, 12);
+
+        _spNumberOfOscars = new Spinner<>();
+        _gpMovie.add(new Label("Oscars"), 0, 13);
+        _gpMovie.add(_spNumberOfOscars, 1, 13);
+
         _splitPane.getItems().add(_gpMovie);
     }
 
