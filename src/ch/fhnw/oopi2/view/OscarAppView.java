@@ -1,8 +1,10 @@
 package ch.fhnw.oopi2.view;
 
+import ch.fhnw.oopi2.model.FSK;
 import ch.fhnw.oopi2.model.Movie;
 import ch.fhnw.oopi2.presenter.Presenter;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -14,8 +16,10 @@ import javafx.util.Callback;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by ajant on 03.05.2016.
@@ -69,6 +73,16 @@ public class OscarAppView extends GridPane implements View {
         _tableView.getItems().addAll(items);
 
         _tableView.getSelectionModel().selectFirst();
+    }
+
+    @Override
+    public void hideMovieDetailPane() {
+        _gpMovie.setVisible(false);
+    }
+
+    @Override
+    public void showMovieDetailPane() {
+        _gpMovie.setVisible(true);
     }
 
     @Override
@@ -331,66 +345,99 @@ public class OscarAppView extends GridPane implements View {
         _gpMovie.add(_hbOscars, 0, 4, 3, 1);
         GridPane.setHgrow(_hbOscars, Priority.ALWAYS);
 
+        final GridPane gpMovieEditable = new GridPane();
+        gpMovieEditable.setHgap(10);
+        gpMovieEditable.setVgap(10);
+        gpMovieEditable.setMaxWidth(Double.MAX_VALUE);
+        gpMovieEditable.getColumnConstraints().add(_gpCol);
+        gpMovieEditable.getColumnConstraints().add(_gpCol);
+        gpMovieEditable.getColumnConstraints().add(_gpCol);
+        gpMovieEditable.getColumnConstraints().add(_gpCol);
+        _gpMovie.add(gpMovieEditable, 0, 5, 4, 1);
+
         _spYear = new Spinner<>();
         _spYear
             .setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1929, LocalDateTime.now().getYear()));
-        _gpMovie.add(new Label("Jahr"), 0, 5);
-        _gpMovie.add(_spYear, 1, 5);
+        gpMovieEditable.add(new Label("Jahr"), 0, 5); // Anmerkung des Entwicklers: Mir ist bewusst, dass der Row-Index ab hier 'eigentlich' falsch ist, aber Java stellt es korrekt dar :-).
+        gpMovieEditable.add(_spYear, 1, 5);
 
         _tfTitle = new TextField();
-        _gpMovie.add(new Label("Titel"), 0, 6);
-        _gpMovie.add(_tfTitle, 1, 6, 3, 1);
+        gpMovieEditable.add(new Label("Titel"), 0, 6);
+        gpMovieEditable.add(_tfTitle, 1, 6, 3, 1);
 
         _tfDirector = new TextField();
-        _gpMovie.add(new Label("Regisseur"), 0, 7);
-        _gpMovie.add(_tfDirector, 1, 7, 3, 1);
+        gpMovieEditable.add(new Label("Regisseur"), 0, 7);
+        gpMovieEditable.add(_tfDirector, 1, 7, 3, 1);
 
         _tfMainActor = new TextField();
-        _gpMovie.add(new Label("Hauptdarsteller"), 0, 8);
-        _gpMovie.add(_tfMainActor, 1, 8, 3, 1);
+        gpMovieEditable.add(new Label("Hauptdarsteller"), 0, 8);
+        gpMovieEditable.add(_tfMainActor, 1, 8, 3, 1);
 
         _tfTitleEnglish = new TextField();
-        _gpMovie.add(new Label("englischer Titel"), 0, 9);
-        _gpMovie.add(_tfTitleEnglish, 1, 9, 3, 1);
+        gpMovieEditable.add(new Label("englischer Titel"), 0, 9);
+        gpMovieEditable.add(_tfTitleEnglish, 1, 9, 3, 1);
 
         _tfGenre = new TextField();
-        _gpMovie.add(new Label("Genre"), 0, 10);
-        _gpMovie.add(_tfGenre, 1, 10);
+        gpMovieEditable.add(new Label("Genre"), 0, 10);
+        gpMovieEditable.add(_tfGenre, 1, 10);
 
         _spYearOfProduction = new Spinner();
         _spYearOfProduction
                 .setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1929, LocalDateTime.now().getYear()));
-        _gpMovie.add(new Label("Produktionsjahr"), 2, 10);
-        _gpMovie.add(_spYearOfProduction, 3, 10);
+        gpMovieEditable.add(new Label("Produktionsjahr"), 2, 10);
+        gpMovieEditable.add(_spYearOfProduction, 3, 10);
 
         _tfCountry = new TextField();
-        _gpMovie.add(new Label("Land"), 0, 11);
-        _gpMovie.add(_tfCountry, 1, 11);
+        gpMovieEditable.add(new Label("Land"), 0, 11);
+        gpMovieEditable.add(_tfCountry, 1, 11);
 
         _spDuration = new Spinner();
         _spDuration.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 240));
-        _gpMovie.add(new Label("Länge (Minuten)"), 2, 11);
-        _gpMovie.add(_spDuration, 3, 11);
+        gpMovieEditable.add(new Label("Länge (Minuten)"), 2, 11);
+        gpMovieEditable.add(_spDuration, 3, 11);
 
         _cbFSK = new ComboBox<>();
-        _gpMovie.add(new Label("FSK-Altersfreigabe"), 0, 12);
-        _gpMovie.add(_cbFSK, 1, 12);
+        _cbFSK.setItems(FXCollections.observableArrayList(Arrays.stream(FSK.values()).map(f -> f.getValue()).collect(Collectors.toList())));
+        class FskCell extends ListCell<Integer> {
+            FskCell() {
+                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            }
+
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (Arrays.stream(FSK.values()).anyMatch(f -> f.getValue() == item)) {
+                    final InputStream posterResourceStream = getClass().getResourceAsStream(String.format("../res/view/javafx/fsk_labels/FSK_ab_%s_logo_Dec_2008.svg.png", item));
+                    if (posterResourceStream != null) {
+                        setGraphic(new ImageView(new Image(posterResourceStream)));
+                        return;
+                    }
+                }
+
+                setGraphic(null);
+            }
+        }
+        _cbFSK.setCellFactory(param -> new FskCell());
+        _cbFSK.setButtonCell(new FskCell());
+        gpMovieEditable.add(new Label("FSK-Altersfreigabe"), 0, 12);
+        gpMovieEditable.add(_cbFSK, 1, 12);
 
         _dpStartDate = new DatePicker();
-        _gpMovie.add(new Label("Kinostart"), 2, 12);
-        _gpMovie.add(_dpStartDate, 3, 12);
+        gpMovieEditable.add(new Label("Kinostart"), 2, 12);
+        gpMovieEditable.add(_dpStartDate, 3, 12);
 
         _spNumberOfOscars = new Spinner<>();
         _spNumberOfOscars.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 11));
-        _gpMovie.add(new Label("Oscars"), 0, 13);
-        _gpMovie.add(_spNumberOfOscars, 1, 13);
+        gpMovieEditable.add(new Label("Oscars"), 0, 13);
+        gpMovieEditable.add(_spNumberOfOscars, 1, 13);
 
         _splitPane.getItems().add(spMovie);
     }
 
     private void addEventHandlers() {
         _tableView.getSelectionModel().selectedItemProperty().addListener((ov, oldValue, newValue) -> {
-            int selectedMovieId = 0;
+            int selectedMovieId = -1;
 
             if (newValue != null && newValue instanceof Movie) {
                 selectedMovieId = ((Movie)newValue).getId();
@@ -417,5 +464,6 @@ public class OscarAppView extends GridPane implements View {
                 .addListener((observable, oldValue, newValue) -> _presenter.onStartDateChanged(Date.from(newValue.atStartOfDay(ZoneId.systemDefault()).toInstant())));
         _spNumberOfOscars.getValueFactory().valueProperty()
                 .addListener((observable, oldValue, newValue) -> _presenter.onNumberOfOscarsChanged(newValue));
+        _tfSearch.textProperty().addListener((observable, oldValue, newValue) -> _presenter.onSearchTextChanged(newValue));
     }
 }

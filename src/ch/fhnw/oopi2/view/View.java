@@ -14,6 +14,10 @@ public interface View {
 
     void setItems(List<Movie> items);
 
+    void hideMovieDetailPane();
+
+    void showMovieDetailPane();
+
     void setPoster(Integer movieId);
 
     void setYear(Integer year);

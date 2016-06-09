@@ -4,7 +4,10 @@ import ch.fhnw.oopi2.model.Model;
 import ch.fhnw.oopi2.model.Movie;
 import ch.fhnw.oopi2.view.View;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 /**
  * Created by ajant on 03.05.2016.
@@ -12,7 +15,8 @@ import java.util.Date;
 public class OscarAppPresenter implements Presenter {
 
     private final View _view;
-    private final Model _repository;
+    private final Model _model;
+    private final SimpleDateFormat _dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
     private Movie _selectedItem;
 
@@ -25,17 +29,19 @@ public class OscarAppPresenter implements Presenter {
             throw new IllegalArgumentException("Argument repository cannot be null.");
 
         _view = view;
-        _repository = repository;
+        _model = repository;
 
         initialize();
     }
 
     @Override
     public void onSelectedItemChanged(Integer movieId) {
-        if (movieId > 0) {
-            Movie item = _repository.getById(movieId);
+        if (movieId > -1) {
+            Movie item = _model.getById(movieId);
             if (item != null) {
                 _selectedItem = item;
+
+                _view.showMovieDetailPane();
 
                 _view.setPoster(_selectedItem.getId());
                 _view.setYear(_selectedItem.getYearOfAward());
@@ -51,17 +57,23 @@ public class OscarAppPresenter implements Presenter {
                 _view.setYearOfProduction(_selectedItem.getYearOfProduction());
                 _view.setDuration(_selectedItem.getDuration());
                 _view.setFsk(_selectedItem.getFsk());
-                //_view.setStartDate(new Date(_selectedItem.getStartDate()));
 
+                try {
+                    _view.setStartDate(_dateFormat.parse(_selectedItem.getStartDate()));
+                } catch (ParseException ex) {
+                    // ToDo: Log exception and notify user
+                }
             }
         } else {
             _selectedItem = null;
+
+            _view.hideMovieDetailPane();
         }
     }
 
     @Override
     public void onSaveClicked() {
-
+        _model.saveChanges();
     }
 
     @Override
@@ -86,12 +98,34 @@ public class OscarAppPresenter implements Presenter {
 
     @Override
     public void onSearchTextChanged(String searchText) {
+        if (searchText == null || searchText.equals("")) {
+            _view.setItems(_model
+                            .getAll()
+                            .stream()
+                            .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
+                            .collect(Collectors.toList()));
+        }
 
+        final String text = searchText.toLowerCase();
+
+        _view.setItems(_model
+                        .getAll()
+                        .stream()
+                        .filter(m -> m.getTitle().toLowerCase().contains(text)
+                                  || m.getTitleEnglish().toLowerCase().contains(text)
+                                  || m.getDirector().toLowerCase().contains(text)
+                                  || m.getMainActor().toLowerCase().contains(text)
+                                  || ((Integer)m.getYearOfAward()).toString().equals(text)
+                        )
+                        .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
+                        .collect(Collectors.toList()));
     }
 
     @Override
     public void onYearChanged(Integer year) {
         if (_selectedItem != null) {
+            // ToDo: sanity check
+
             _selectedItem.setYearOfAward(year);
             _view.setYear(year);
         }
@@ -100,6 +134,8 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onTitleChanged(String title) {
         if (_selectedItem != null) {
+            // ToDo: sanity check
+
             _selectedItem.setTitle(title);
             _view.setTitle(title);
         }
@@ -108,6 +144,8 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onDirectorChanged(String director) {
         if (_selectedItem != null) {
+            // ToDo: sanity check
+
             _selectedItem.setDirector(director);
             _view.setDirector(_selectedItem.getDirector());
             _view.setDirectorHeading(String.format("von %s", _selectedItem.getDirector()));
@@ -117,6 +155,8 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onMainActorChanged(String mainActor) {
         if (_selectedItem != null) {
+            // ToDo: sanity check
+
             _selectedItem.setMainActor(mainActor);
             _view.setMainActor(_selectedItem.getMainActor());
             _view.setMainActorHeading(String.format("mit %s",_selectedItem.getMainActor()));
@@ -126,6 +166,8 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onTitleEnglishChanged(String titleEnglish) {
         if (_selectedItem != null) {
+            // ToDo: sanity check
+
             _selectedItem.setTitleEnglish(titleEnglish);
             _view.setTitleEnglish(titleEnglish);
         }
@@ -134,6 +176,8 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onGenreChanged(String genre) {
         if (_selectedItem != null) {
+            // ToDo: sanity check
+
             _selectedItem.setGenre(genre);
             _view.setGenre(genre);
         }
@@ -142,6 +186,8 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onYearOfProductionChanged(Integer yearOfProduction) {
         if (_selectedItem != null) {
+            // ToDo: sanity check
+
             _selectedItem.setYearOfProduction(yearOfProduction);
             _view.setYearOfProduction(yearOfProduction);
         }
@@ -150,6 +196,8 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onCountryChanged(String country) {
         if (_selectedItem != null) {
+            // ToDo: sanity check
+
             _selectedItem.setCountry(country);
             _view.setCountry(country);
         }
@@ -158,6 +206,8 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onDurationChanged(Integer duration) {
         if (_selectedItem != null) {
+            // ToDo: sanity check
+
             _selectedItem.setDuration(duration);
             _view.setDuration(duration);
         }
@@ -166,6 +216,8 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onFskChanged(Integer fsk) {
         if (_selectedItem != null) {
+            // ToDo: sanity check
+
             _selectedItem.setFsk(fsk);
             _view.setFsk(fsk);
         }
@@ -174,14 +226,23 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onStartDateChanged(Date startDate) {
         if (_selectedItem != null) {
-            _selectedItem.setStartDate(startDate.toString());
-            _view.setStartDate(startDate);
+            // ToDo: sanity check
+
+            _selectedItem.setStartDate(_dateFormat.format(startDate));
+
+            try {
+                _view.setStartDate(_dateFormat.parse(_selectedItem.getStartDate()));
+            } catch (ParseException ex) {
+                // ToDo: log exception and notify user
+            }
         }
     }
 
     @Override
     public void onNumberOfOscarsChanged(Integer numberOfOscars) {
         if (_selectedItem != null) {
+            // ToDo: sanity check
+
             _selectedItem.setNumberOfOscars(numberOfOscars);
             _view.setNumberOfOscars(numberOfOscars);
         }
@@ -189,6 +250,10 @@ public class OscarAppPresenter implements Presenter {
 
     private void initialize() {
         _view.setPresenter(this);
-        _view.setItems(_repository.getAll());
+        _view.setItems(_model
+                .getAll()
+                .stream()
+                .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
+                .collect(Collectors.toList()));
     }
 }
