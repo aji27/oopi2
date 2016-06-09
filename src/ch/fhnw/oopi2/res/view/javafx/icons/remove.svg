@@ -11,15 +11,15 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="96"
    height="96"
-   id="svg4874"
+   _id="svg4874"
    version="1.1"
    inkscape:version="0.91+devel r"
    viewBox="0 0 96 96.000001"
    sodipodi:docname="remove.svg">
   <defs
-     id="defs4876" />
+     _id="defs4876" />
   <sodipodi:namedview
-     id="base"
+     _id="base"
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
@@ -53,100 +53,100 @@
      inkscape:snap-global="true">
     <inkscape:grid
        type="xygrid"
-       id="grid5451"
+       _id="grid5451"
        empspacing="8" />
     <sodipodi:guide
        orientation="1,0"
        position="8,-8.0000001"
-       id="guide4063" />
+       _id="guide4063" />
     <sodipodi:guide
        orientation="1,0"
        position="4,-8.0000001"
-       id="guide4065" />
+       _id="guide4065" />
     <sodipodi:guide
        orientation="0,1"
        position="-8,88.000001"
-       id="guide4067" />
+       _id="guide4067" />
     <sodipodi:guide
        orientation="0,1"
        position="-8,92.000001"
-       id="guide4069" />
+       _id="guide4069" />
     <sodipodi:guide
        orientation="0,1"
        position="104,4"
-       id="guide4071" />
+       _id="guide4071" />
     <sodipodi:guide
        orientation="0,1"
        position="-5,8.0000001"
-       id="guide4073" />
+       _id="guide4073" />
     <sodipodi:guide
        orientation="1,0"
        position="92,-8.0000001"
-       id="guide4075" />
+       _id="guide4075" />
     <sodipodi:guide
        orientation="1,0"
        position="88,-8.0000001"
-       id="guide4077" />
+       _id="guide4077" />
     <sodipodi:guide
        orientation="0,1"
        position="-8,84.000001"
-       id="guide4074" />
+       _id="guide4074" />
     <sodipodi:guide
        orientation="1,0"
        position="12,-8.0000001"
-       id="guide4076" />
+       _id="guide4076" />
     <sodipodi:guide
        orientation="0,1"
        position="-5,12"
-       id="guide4078" />
+       _id="guide4078" />
     <sodipodi:guide
        orientation="1,0"
        position="84,-9.0000001"
-       id="guide4080" />
+       _id="guide4080" />
     <sodipodi:guide
        position="48,-8.0000001"
        orientation="1,0"
-       id="guide4170" />
+       _id="guide4170" />
     <sodipodi:guide
        position="-8,48"
        orientation="0,1"
-       id="guide4172" />
+       _id="guide4172" />
   </sodipodi:namedview>
   <metadata
-     id="metadata4879">
+     _id="metadata4879">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:_title></dc:_title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1"
+     _id="layer1"
      transform="translate(67.857146,-78.50504)">
     <g
        transform="matrix(0,-1,-1,0,373.50506,516.50504)"
-       id="g4845"
+       _id="g4845"
        style="display:inline">
       <g
          inkscape:export-ydpi="90"
          inkscape:export-xdpi="90"
          inkscape:export-filename="next01.png"
          transform="matrix(-0.9996045,0,0,1,575.94296,-611.00001)"
-         id="g4778"
+         _id="g4778"
          inkscape:label="Layer 1">
         <g
            transform="matrix(-1,0,0,1,575.99999,611)"
-           id="g4780"
+           _id="g4780"
            style="display:inline">
           <rect
              style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:none;stroke-width:4;marker:none;enable-background:accumulate"
-             id="rect4782"
+             _id="rect4782"
              width="96.037987"
              height="96"
              x="-438.00244"
@@ -158,7 +158,7 @@
              x="-391.98425"
              height="80.000038"
              width="4.0015335"
-             id="rect1714"
+             _id="rect1714"
              style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:7.5;marker:none;enable-background:accumulate" />
         </g>
       </g>

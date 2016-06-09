@@ -1,9 +1,7 @@
 package ch.fhnw.oopi2.view;
 
 import ch.fhnw.oopi2.model.Movie;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ChangeListener;
+import ch.fhnw.oopi2.presenter.Presenter;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,16 +10,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.util.Callback;
-import javafx.util.converter.NumberStringConverter;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by ajant on 03.05.2016.
  */
-public class ApplicationUI extends GridPane implements ApplicationView {
+public class OscarAppView extends GridPane implements View {
 
     private ToolBar _toolBar;
     private Button _btnSave;
@@ -37,37 +36,146 @@ public class ApplicationUI extends GridPane implements ApplicationView {
     private Label _lblTitle;
     private Label _lblDirector;
     private Label _lblMainActor;
-    private ImageView _ivCountry;
+    private HBox _hbCountry;
     private ImageView _ivPoster;
     private HBox _hbOscars;
     private Spinner<Integer> _spYear;
     private TextField _tfTitle;
     private TextField _tfDirector;
     private TextField _tfMainActor;
-    private TextField _tfTitleEN;
+    private TextField _tfTitleEnglish;
     private TextField _tfGenre;
-    private Spinner<Integer> _spProductionYear;
+    private Spinner<Integer> _spYearOfProduction;
     private TextField _tfCountry;
     private Spinner<Integer> _spDuration;
     private ComboBox<Integer> _cbFSK;
     private DatePicker _dpStartDate;
     private Spinner<Integer> _spNumberOfOscars;
 
-    public ApplicationUI(){
-        initializeControls();
-        layoutControls();
-        addEventHandlers();
-        addValueChangeListeners();
-        addBindings();
+    private Presenter _presenter;
+
+    public OscarAppView(){
+        initialize();
+    }
+
+    @Override
+    public void setPresenter(Presenter presenter) {
+        _presenter = presenter;
     }
 
     @Override
     public void setItems(List<Movie> items) {
+        _tableView.getItems().clear();
         _tableView.getItems().addAll(items);
-        _tableView.requestLayout();
+
+        _tableView.getSelectionModel().selectFirst();
     }
 
-    private void initializeControls() {
+    @Override
+    public void setPoster(Integer movieId) {
+        final InputStream posterResourceStream = getClass().getResourceAsStream(String.format("../res/view/javafx/posters/%s.jpg", movieId));
+        if (posterResourceStream != null) {
+            _ivPoster.setImage(new Image(posterResourceStream));
+        }
+    }
+
+    @Override
+    public void setYear(Integer year) {
+        _lblYear.setText(year.toString());
+        _spYear.getValueFactory().setValue(year);
+    }
+
+    @Override
+    public void setTitle(String title) {
+        _lblTitle.setText(title);
+        _tfTitle.setText(title);
+    }
+
+    @Override
+    public void setDirector(String director) {
+        _lblDirector.setText(director);
+        _tfDirector.setText(director);
+    }
+
+    @Override
+    public void setMainActor(String mainActor) {
+        _lblMainActor.setText(mainActor);
+        _tfMainActor.setText(mainActor);
+    }
+
+    @Override
+    public void setTitleEnglish(String titleEnglish) {
+        _tfTitleEnglish.setText(titleEnglish);
+    }
+
+    @Override
+    public void setGenre(String genre) {
+        _tfGenre.setText(genre);
+    }
+
+    @Override
+    public void setYearOfProduction(Integer yearOfProduction) {
+        _spYearOfProduction.getValueFactory().setValue(yearOfProduction);
+    }
+
+    @Override
+    public void setCountry(String country) {
+        _tfCountry.setText(country);
+
+        _hbCountry.getChildren().clear();
+
+        if (country != null && !country.equals("")) {
+            for (String c : country.split("/")) {
+                if (c != null) {
+                    final InputStream countryResourceStream = getClass().getResourceAsStream(String.format("../res/view/javafx/flags/%s.png", c.trim()));
+                    if (countryResourceStream != null) {
+                        _hbCountry.getChildren().add(new ImageView(new Image(countryResourceStream)));
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void setDuration(Integer duration) {
+        _spDuration.getValueFactory().setValue(duration);
+    }
+
+    @Override
+    public void setFsk(Integer fsk) {
+        _cbFSK.setValue(fsk);
+    }
+
+    @Override
+    public void setStartDate(Date startDate) {
+        _dpStartDate.setValue(startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+    }
+
+    @Override
+    public void setNumberOfOscars(Integer numberOfOscars) {
+        _spNumberOfOscars.getValueFactory().setValue(numberOfOscars);
+
+        _hbOscars.getChildren().clear();
+
+        final InputStream oscarResourceStream = getClass().getResourceAsStream("../res/view/javafx/Oscar-logo.png");
+        if (oscarResourceStream != null) {
+            final Image oscarImage = new Image(oscarResourceStream, 30, 76, true, true);
+            for (int i = 1; i <= numberOfOscars; i++) {
+                ImageView ivOscar = new ImageView(oscarImage);
+                StackPane spOscar = new StackPane(ivOscar);
+                spOscar.setPadding(new Insets(0,10,0,0));
+                _hbOscars.getChildren().add(spOscar);
+            }
+        }
+    }
+
+    private void initialize() {
+        initializeComponent();
+        addEventHandlers();
+        addValueChangeListeners();
+    }
+
+    private void initializeComponent() {
 
         ColumnConstraints column = new ColumnConstraints();
         column.setHgrow(Priority.ALWAYS);
@@ -189,8 +297,8 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _lblYear = new Label();
         _gpMovie.add(_lblYear, 0, 0, 2, 1);
 
-        _ivCountry = new ImageView();
-        final StackPane spCountry = new StackPane(_ivCountry);
+        _hbCountry = new HBox();
+        final StackPane spCountry = new StackPane(_hbCountry);
         spCountry.setPadding(new Insets(0,10,0,0));
         spCountry.setAlignment(Pos.TOP_CENTER);
         _ivPoster = new ImageView();
@@ -229,19 +337,19 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _gpMovie.add(new Label("Hauptdarsteller"), 0, 8);
         _gpMovie.add(_tfMainActor, 1, 8, 3, 1);
 
-        _tfTitleEN = new TextField();
+        _tfTitleEnglish = new TextField();
         _gpMovie.add(new Label("englischer Titel"), 0, 9);
-        _gpMovie.add(_tfTitleEN, 1, 9, 3, 1);
+        _gpMovie.add(_tfTitleEnglish, 1, 9, 3, 1);
 
         _tfGenre = new TextField();
         _gpMovie.add(new Label("Genre"), 0, 10);
         _gpMovie.add(_tfGenre, 1, 10);
 
-        _spProductionYear = new Spinner();
-        _spProductionYear
+        _spYearOfProduction = new Spinner();
+        _spYearOfProduction
                 .setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1929, LocalDateTime.now().getYear()));
         _gpMovie.add(new Label("Produktionsjahr"), 2, 10);
-        _gpMovie.add(_spProductionYear, 3, 10);
+        _gpMovie.add(_spYearOfProduction, 3, 10);
 
         _tfCountry = new TextField();
         _gpMovie.add(new Label("Land"), 0, 11);
@@ -268,118 +376,34 @@ public class ApplicationUI extends GridPane implements ApplicationView {
         _splitPane.getItems().add(spMovie);
     }
 
-    private void layoutControls() {
-
-    }
-
     private void addEventHandlers() {
+        _tableView.getSelectionModel().selectedItemProperty().addListener((ov, oldValue, newValue) -> {
+            int selectedMovieId = 0;
 
+            if (newValue != null && newValue instanceof Movie) {
+                selectedMovieId = ((Movie)newValue).getId();
+            }
+            _presenter.onSelectedItemChanged(selectedMovieId);
+        });
     }
 
     private void addValueChangeListeners(){
-
-    }
-
-    private ObjectProperty<Integer> _tmpYearOfAwardProperty;
-    private ObjectProperty<Integer> _tmpYearOfProductionProperty;
-    private ObjectProperty<Integer> _tmpDurationProperty;
-    private ObjectProperty<Integer> _tmpNumberOfOscarsProperty;
-
-    private void addBindings() {
-        _tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Movie>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Movie> ov, Movie oldValue, Movie newValue) {
-
-                _ivCountry.setImage(null);
-                _ivPoster.setImage(null);
-                _hbOscars.getChildren().clear();
-
-                if (oldValue != null) {
-                    Bindings.unbindBidirectional(_lblYear.textProperty(), oldValue.yearOfAwardProperty());
-                    _lblTitle.textProperty().unbind();
-                    _lblDirector.textProperty().unbind();
-                    _lblMainActor.textProperty().unbind();
-
-                    _tfTitle.textProperty().unbindBidirectional(oldValue.titleProperty());
-                    _tfDirector.textProperty().unbindBidirectional(oldValue.directorProperty());
-                    _tfMainActor.textProperty().unbindBidirectional(oldValue.mainActorProperty());
-                    _tfTitleEN.textProperty().unbindBidirectional(oldValue.titleEnglishProperty());
-                    _tfGenre.textProperty().unbindBidirectional(oldValue.genreProperty());
-                    _tfCountry.textProperty().unbindBidirectional(oldValue.countryProperty());
-
-                    if (_tmpYearOfAwardProperty != null) {
-                        _spYear.getValueFactory().valueProperty().unbindBidirectional(_tmpYearOfAwardProperty);
-                        _tmpYearOfAwardProperty = null;
-                    }
-                    if (_tmpYearOfProductionProperty != null) {
-                        _spProductionYear.getValueFactory().valueProperty().unbindBidirectional(_tmpYearOfProductionProperty);
-                        _tmpYearOfProductionProperty = null;
-                    }
-                    if (_tmpDurationProperty != null) {
-                        _spDuration.getValueFactory().valueProperty().unbindBidirectional(_tmpDurationProperty);
-                        _tmpDurationProperty = null;
-                    }
-                    if (_tmpNumberOfOscarsProperty != null) {
-                        _spNumberOfOscars.getValueFactory().valueProperty().unbindBidirectional(_tmpNumberOfOscarsProperty);
-                        _tmpNumberOfOscarsProperty = null;
-                    }
-
-                    _cbFSK.valueProperty().unbind();
-                    _dpStartDate.valueProperty().unbind();
-                }
-
-                if (newValue != null) {
-                    Bindings.bindBidirectional(_lblYear.textProperty(), newValue.yearOfAwardProperty(), new NumberStringConverter());
-                    _lblTitle.textProperty().bind(newValue.titleProperty());
-                    _lblDirector.textProperty().bind(newValue.directorProperty());
-                    _lblMainActor.textProperty().bind(newValue.mainActorProperty());
-
-                    final InputStream countryResourceStream = getClass().getResourceAsStream(String.format("../res/view/javafx/flags/%s.png", newValue.getCountry()));
-                    if (countryResourceStream != null) {
-                        _ivCountry.setImage(new Image(countryResourceStream));
-                    }
-
-                    final InputStream posterResourceStream = getClass().getResourceAsStream(String.format("../res/view/javafx/posters/%s.jpg", newValue.getId()));
-                    if (posterResourceStream != null) {
-                        _ivPoster.setImage(new Image(posterResourceStream));
-                    }
-
-                    final InputStream oscarResourceStream = getClass().getResourceAsStream("../res/view/javafx/Oscar-logo.png");
-                    if (oscarResourceStream != null) {
-                        final Image oscarImage = new Image(oscarResourceStream, 30, 76, true, true);
-                        for (int i = 1; i <= newValue.getNumberOfOscars(); i++) {
-                            ImageView ivOscar = new ImageView(oscarImage);
-                            StackPane spOscar = new StackPane(ivOscar);
-                            spOscar.setPadding(new Insets(0,10,0,0));
-                            _hbOscars.getChildren().add(spOscar);
-                        }
-                    }
-
-                    _tfTitle.textProperty().bindBidirectional(newValue.titleProperty());
-                    _tfDirector.textProperty().bindBidirectional(newValue.directorProperty());
-                    _tfMainActor.textProperty().bindBidirectional(newValue.mainActorProperty());
-                    _tfTitleEN.textProperty().bindBidirectional(newValue.titleEnglishProperty());
-                    _tfGenre.textProperty().bindBidirectional(newValue.genreProperty());
-                    _tfCountry.textProperty().bindBidirectional(newValue.countryProperty());
-
-                    _tmpYearOfAwardProperty = newValue.yearOfAwardProperty().asObject();
-                    _spYear.getValueFactory().valueProperty().bindBidirectional(_tmpYearOfAwardProperty);
-
-                    _tmpYearOfProductionProperty = newValue.yearOfProductionProperty().asObject();
-                    _spProductionYear.getValueFactory().valueProperty().bindBidirectional(_tmpYearOfProductionProperty);
-
-                    _tmpDurationProperty = newValue.durationProperty().asObject();
-                    _spDuration.getValueFactory().valueProperty().bindBidirectional(_tmpDurationProperty);
-
-                    _tmpNumberOfOscarsProperty = newValue.numberOfOscarsProperty().asObject();
-                    _spNumberOfOscars.getValueFactory().valueProperty().bindBidirectional(_tmpNumberOfOscarsProperty);
-
-                    //_cbFSK.valueProperty().bindBidirectional(newValue.fskProperty());
-
-                    //_dpStartDate.valueProperty().bindBidirectional(newValue.startDateProperty());
-                }
-            }
-        });
+        _spYear.getValueFactory().valueProperty()
+                .addListener((observable, oldValue, newValue) -> _presenter.onYearChanged(newValue));
+        _tfTitle.textProperty().addListener((observable, oldValue, newValue) -> _presenter.onTitleChanged(newValue));
+        _tfDirector.textProperty().addListener((observable, oldValue, newValue) -> _presenter.onDirectorChanged(newValue));
+        _tfMainActor.textProperty().addListener((observable, oldValue, newValue) -> _presenter.onMainActorChanged(newValue));
+        _tfTitleEnglish.textProperty().addListener((observable, oldValue, newValue) -> _presenter.onTitleEnglishChanged(newValue));
+        _tfGenre.textProperty().addListener((observable, oldValue, newValue) -> _presenter.onGenreChanged(newValue));
+        _spYearOfProduction.getValueFactory().valueProperty()
+                .addListener((observable, oldValue, newValue) -> _presenter.onYearOfProductionChanged(newValue));
+        _tfCountry.textProperty().addListener((observable, oldValue, newValue) -> _presenter.onCountryChanged(newValue));
+        _spDuration.getValueFactory().valueProperty()
+                .addListener((observable, oldValue, newValue) -> _presenter.onDurationChanged(newValue));
+        _cbFSK.valueProperty().addListener((observable, oldValue, newValue) -> _presenter.onFskChanged(newValue));
+        _dpStartDate.valueProperty()
+                .addListener((observable, oldValue, newValue) -> _presenter.onStartDateChanged(Date.from(newValue.atStartOfDay(ZoneId.systemDefault()).toInstant())));
+        _spNumberOfOscars.getValueFactory().valueProperty()
+                .addListener((observable, oldValue, newValue) -> _presenter.onNumberOfOscarsChanged(newValue));
     }
 }

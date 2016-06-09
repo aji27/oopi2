@@ -1,8 +1,10 @@
 package ch.fhnw.oopi2;
 
-import ch.fhnw.oopi2.model.MovieRepositoryImpl;
-import ch.fhnw.oopi2.presenter.Presenter;
-import ch.fhnw.oopi2.view.ApplicationUI;
+import ch.fhnw.oopi2.model.FileBackendModel;
+import ch.fhnw.oopi2.model.Model;
+import ch.fhnw.oopi2.presenter.OscarAppPresenter;
+import ch.fhnw.oopi2.view.OscarAppView;
+import ch.fhnw.oopi2.view.View;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
@@ -22,12 +24,15 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws UnsupportedEncodingException {
-        MovieRepositoryImpl.initialize();
+        FileBackendModel.initialize();
 
-        ApplicationUI ui = new ApplicationUI();
-        Presenter presenter = new Presenter(ui, MovieRepositoryImpl.getCurrent());
+        OscarAppView oscarAppView = new OscarAppView();
 
-        GridPane root = ui;
+        Model model = FileBackendModel.getCurrent();
+        View view = oscarAppView;
+        OscarAppPresenter presenter = new OscarAppPresenter(view, model);
+
+        GridPane root = oscarAppView;
         root.setPrefSize(PREF_WINDOW_WIDTH, PREF_WINDOW_HEIGHT);
         root.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
 
@@ -36,7 +41,5 @@ public class App extends Application {
         primaryStage.setTitle("Oscars für den besten Film");
         primaryStage.setScene(scene);
         primaryStage.show();
-
-        presenter.initialize();
     }
 }

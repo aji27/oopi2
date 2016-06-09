@@ -1,4 +1,4 @@
-#id;Title;yearOfAward;director;mainActor;titleEnglish;yearOfProduction;country;duration;fsk;genre;startDate;numberOfOscars
+#_id;Title;_yearOfAward;_director;_mainActor;_titleEnglish;_yearOfProduction;_country;_duration;_fsk;_genre;_startDate;_numberOfOscars
 0;Broadway Melody;1929;Harry Beaumont;Anita Page, Bessie Love;The Broadway Melody;1929;US;100;12;Musikfilm;-;1
 1;Im Westen nichts Neues;1931;Lewis Milestone;Louis Wolheim, Lew Ayres;All Quiet on the Western Front;1930;US;136;12;Drama;04.12.1930;1
 2;Pioniere des wilden Westens ;1932;Wesley Ruggles;Richard Dix, Irene Dunne;Cimarron;1931;US;123;12;Drama, Western;-;1

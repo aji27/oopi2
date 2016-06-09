@@ -8,26 +8,26 @@ import java.util.stream.Collectors;
 /**
  * Created by Ajanth on 06.06.2016.
  */
-public class MovieRepositoryImpl implements MovieRepository {
+public class FileBackendModel implements Model {
 
     public static final String FILENAME_BACKEND = "../res/model/filebackend/movies.csv";
-    private static MovieRepositoryImpl _instance;
+    private static FileBackendModel _instance;
 
     private final HashSet<Movie> _movies = new HashSet<>();
 
     private final Object _syncStreamAccess = new Object();
     private final Object _syncCollectionAccess = new Object();
 
-    private MovieRepositoryImpl() {
+    private FileBackendModel() {
     }
 
-    public static MovieRepository getCurrent() {
+    public static Model getCurrent() {
         return _instance;
     }
 
     public static void initialize() throws UnsupportedEncodingException {
         if (_instance == null) {
-            _instance = new MovieRepositoryImpl();
+            _instance = new FileBackendModel();
             _instance.loadData();
         }
     }

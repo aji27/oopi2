@@ -11,15 +11,15 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="96"
    height="96"
-   id="svg4874"
+   _id="svg4874"
    version="1.1"
    inkscape:version="0.91+devel r"
    viewBox="0 0 96 96.000001"
    sodipodi:docname="redo.svg">
   <defs
-     id="defs4876" />
+     _id="defs4876" />
   <sodipodi:namedview
-     id="base"
+     _id="base"
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
@@ -53,90 +53,90 @@
      inkscape:snap-global="true">
     <inkscape:grid
        type="xygrid"
-       id="grid5451"
+       _id="grid5451"
        empspacing="8" />
     <sodipodi:guide
        orientation="1,0"
        position="8,-8.0000001"
-       id="guide4063"
+       _id="guide4063"
        inkscape:locked="false" />
     <sodipodi:guide
        orientation="1,0"
        position="4,-8.0000001"
-       id="guide4065"
+       _id="guide4065"
        inkscape:locked="false" />
     <sodipodi:guide
        orientation="0,1"
        position="-8,88.000001"
-       id="guide4067"
+       _id="guide4067"
        inkscape:locked="false" />
     <sodipodi:guide
        orientation="0,1"
        position="-8,92.000001"
-       id="guide4069"
+       _id="guide4069"
        inkscape:locked="false" />
     <sodipodi:guide
        orientation="0,1"
        position="104,4"
-       id="guide4071"
+       _id="guide4071"
        inkscape:locked="false" />
     <sodipodi:guide
        orientation="0,1"
        position="-5,8.0000001"
-       id="guide4073"
+       _id="guide4073"
        inkscape:locked="false" />
     <sodipodi:guide
        orientation="1,0"
        position="88,-8.0000001"
-       id="guide4077"
+       _id="guide4077"
        inkscape:locked="false" />
     <sodipodi:guide
        orientation="0,1"
        position="-8,84.000001"
-       id="guide4074"
+       _id="guide4074"
        inkscape:locked="false" />
     <sodipodi:guide
        orientation="1,0"
        position="12,-8.0000001"
-       id="guide4076"
+       _id="guide4076"
        inkscape:locked="false" />
     <sodipodi:guide
        orientation="1,0"
        position="84,-8.0000001"
-       id="guide4080"
+       _id="guide4080"
        inkscape:locked="false" />
     <sodipodi:guide
        position="48,-8.0000001"
        orientation="1,0"
-       id="guide4170"
+       _id="guide4170"
        inkscape:locked="false" />
     <sodipodi:guide
        position="-8,48"
        orientation="0,1"
-       id="guide4172"
+       _id="guide4172"
        inkscape:locked="false" />
     <sodipodi:guide
        position="92,-8.0000001"
        orientation="1,0"
-       id="guide4760"
+       _id="guide4760"
        inkscape:locked="false" />
   </sodipodi:namedview>
   <metadata
-     id="metadata4879">
+     _id="metadata4879">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:_title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1"
+     _id="layer1"
      transform="translate(67.857146,-78.50504)">
     <rect
        transform="rotate(-90)"
@@ -144,19 +144,19 @@
        x="-174.50504"
        height="96"
        width="96.000008"
-       id="rect4782-85"
+       _id="rect4782-85"
        style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:none;stroke:none;stroke-width:3.99920893;marker:none;enable-background:accumulate" />
     <path
        style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.99940658;marker:none;enable-background:accumulate"
        d="m 3.121241,130.50628 20.203275,12.95478 c 0.566778,-3.97323 1.00199,-8.10901 1.309077,-12.40714 0.283465,-4.27093 0.440957,-8.46528 0.468926,-12.58218 -3.693694,1.76472 -7.423824,3.66655 -11.188082,5.70408 -3.781341,2.07127 -7.378204,4.18086 -10.79244,6.32926 z"
-       id="path5588-9-2-6"
+       _id="path5588-9-2-6"
        inkscape:connector-curvature="0"
        inkscape:transform-center-x="2.9186437"
        inkscape:transform-center-y="3.2970594" />
     <path
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#808080;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        d="m -63.855469,118.50586 c -10e-7,21.06075 15.639578,38.88976 36.523438,41.63867 20.8838596,2.74891 40.604731,-10.42644 46.05664,-30.76953 l -3.863281,-1.03516 c -4.9402065,18.43374 -22.747187,30.32892 -41.671875,27.83789 -18.924688,-2.49102 -33.044923,-18.5879 -33.044922,-37.67187 z"
-       id="path4228"
+       _id="path4228"
        inkscape:connector-curvature="0" />
   </g>
 </svg>

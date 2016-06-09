@@ -1,22 +1,47 @@
 package ch.fhnw.oopi2.presenter;
 
-import ch.fhnw.oopi2.model.MovieRepository;
-import ch.fhnw.oopi2.view.ApplicationView;
+import java.util.Date;
 
 /**
- * Created by ajant on 03.05.2016.
+ * Created by Ajanth on 09.06.2016.
  */
-public class Presenter {
+public interface Presenter {
 
-    private final ApplicationView _view;
-    private final MovieRepository _repository;
+    void onSelectedItemChanged(Integer movieId);
 
-    public Presenter(ApplicationView view, MovieRepository repository) {
-        _view = view;
-        _repository = repository;
-    }
+    void onSaveClicked();
 
-    public void initialize() {
-        _view.setItems(_repository.getAll());
-    }
+    void onAddNewItemClicked();
+
+    void onDeleteSelectedItemClicked();
+
+    void onUndoClicked();
+
+    void onRedoClicked();
+
+    void onSearchTextChanged(String searchText);
+
+    void onYearChanged(Integer year);
+
+    void onTitleChanged(String title);
+
+    void onDirectorChanged(String director);
+
+    void onMainActorChanged(String mainActor);
+
+    void onTitleEnglishChanged(String titleEnglish);
+
+    void onGenreChanged(String genre);
+
+    void onYearOfProductionChanged(Integer yearOfProduction);
+
+    void onCountryChanged(String country);
+
+    void onDurationChanged(Integer duration);
+
+    void onFskChanged(Integer fsk);
+
+    void onStartDateChanged(Date startDate);
+
+    void onNumberOfOscarsChanged(Integer numberOfOscars);
 }

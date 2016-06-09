@@ -9,212 +9,173 @@ import javafx.beans.property.StringProperty;
  * Created by ajant on 03.05.2016.
  */
 public class MovieImpl implements Movie {
-    private final IntegerProperty id = new SimpleIntegerProperty(0);
-    private final StringProperty title = new SimpleStringProperty("");
-    private final IntegerProperty yearOfAward = new SimpleIntegerProperty(0);
-    private final StringProperty mainActor =  new SimpleStringProperty("");
-    private final StringProperty director =  new SimpleStringProperty("");
-    private final StringProperty titleEnglish = new SimpleStringProperty("");
-    private final IntegerProperty yearOfProduction = new SimpleIntegerProperty(0);
-    private final StringProperty country = new SimpleStringProperty("");
-    private final IntegerProperty duration = new SimpleIntegerProperty(0);
-    private final IntegerProperty fsk = new SimpleIntegerProperty(0);
-    private final StringProperty genre =  new SimpleStringProperty("");
-    private final StringProperty startDate = new SimpleStringProperty("");
-    private final IntegerProperty numberOfOscars = new SimpleIntegerProperty(0);
+    private final IntegerProperty _id = new SimpleIntegerProperty(0);
+    private final StringProperty _title = new SimpleStringProperty("");
+    private final IntegerProperty _yearOfAward = new SimpleIntegerProperty(0);
+    private final StringProperty _mainActor =  new SimpleStringProperty("");
+    private final StringProperty _director =  new SimpleStringProperty("");
+    private final StringProperty _titleEnglish = new SimpleStringProperty("");
+    private final IntegerProperty _yearOfProduction = new SimpleIntegerProperty(0);
+    private final StringProperty _country = new SimpleStringProperty("");
+    private final IntegerProperty _duration = new SimpleIntegerProperty(0);
+    private final IntegerProperty _fsk = new SimpleIntegerProperty(0);
+    private final StringProperty _genre =  new SimpleStringProperty("");
+    private final StringProperty _startDate = new SimpleStringProperty("");
+    private final IntegerProperty _numberOfOscars = new SimpleIntegerProperty(0);
 
-    @Override
     public int getId() {
-        return id.get();
+        return _id.get();
     }
 
-    @Override
     public IntegerProperty idProperty() {
-        return id;
+        return _id;
     }
 
-    @Override
     public void setId(int id) {
-        this.id.set(id);
+        this._id.set(id);
     }
 
-    @Override
     public String getTitle() {
-        return title.get();
+        return _title.get();
     }
 
-    @Override
     public StringProperty titleProperty() {
-        return title;
+        return _title;
     }
 
-    @Override
     public void setTitle(String title) {
-        this.title.set(title);
+        this._title.set(title);
     }
 
-    @Override
     public int getYearOfAward() {
-        return yearOfAward.get();
+        return _yearOfAward.get();
     }
 
-    @Override
     public IntegerProperty yearOfAwardProperty() {
-        return yearOfAward;
+        return _yearOfAward;
     }
 
-    @Override
     public void setYearOfAward(int yearOfAward) {
-        this.yearOfAward.set(yearOfAward);
+        this._yearOfAward.set(yearOfAward);
     }
 
-    @Override
     public String getDirector() {
-        return director.get();
+        return _director.get();
     }
 
-    @Override
     public StringProperty directorProperty() {
-        return director;
+        return _director;
     }
 
-    @Override
     public void setDirector(String director) {
-        this.director.set(director);
+        this._director.set(director);
     }
 
-    @Override
     public String getMainActor() {
-        return mainActor.get();
+        return _mainActor.get();
     }
 
-    @Override
     public StringProperty mainActorProperty() {
-        return mainActor;
+        return _mainActor;
     }
 
-    @Override
     public void setMainActor(String mainActor) {
-        this.mainActor.set(mainActor);
+        this._mainActor.set(mainActor);
     }
 
-    @Override
     public String getTitleEnglish() {
-        return titleEnglish.get();
+        return _titleEnglish.get();
     }
 
-    @Override
     public StringProperty titleEnglishProperty() {
-        return titleEnglish;
+        return _titleEnglish;
     }
 
-    @Override
     public void setTitleEnglish(String titleEnglish) {
-        this.titleEnglish.set(titleEnglish);
+        this._titleEnglish.set(titleEnglish);
     }
 
-    @Override
     public int getYearOfProduction() {
-        return yearOfProduction.get();
+        return _yearOfProduction.get();
     }
 
-    @Override
     public IntegerProperty yearOfProductionProperty() {
-        return yearOfProduction;
+        return _yearOfProduction;
     }
 
-    @Override
     public void setYearOfProduction(int yearOfProduction) {
-        this.yearOfProduction.set(yearOfProduction);
+        this._yearOfProduction.set(yearOfProduction);
     }
 
-    @Override
     public String getCountry() {
-        return country.get();
+        return _country.get();
     }
 
-    @Override
     public StringProperty countryProperty() {
-        return country;
+        return _country;
     }
 
-    @Override
     public void setCountry(String country) {
-        this.country.set(country);
+        this._country.set(country);
     }
 
-    @Override
     public int getDuration() {
-        return duration.get();
+        return _duration.get();
     }
 
-    @Override
     public IntegerProperty durationProperty() {
-        return duration;
+        return _duration;
     }
 
-    @Override
     public void setDuration(int duration) {
-        this.duration.set(duration);
+        this._duration.set(duration);
     }
 
-    @Override
     public int getFsk() {
-        return fsk.get();
+        return _fsk.get();
     }
 
-    @Override
     public IntegerProperty fskProperty() {
-        return fsk;
+        return _fsk;
     }
 
-    @Override
     public void setFsk(int fsk) {
-        this.fsk.set(fsk);
+        this._fsk.set(fsk);
     }
 
-    @Override
     public String getGenre() {
-        return genre.get();
+        return _genre.get();
     }
 
-    @Override
     public StringProperty genreProperty() {
-        return genre;
+        return _genre;
     }
 
-    @Override
     public void setGenre(String genre) {
-        this.genre.set(genre);
+        this._genre.set(genre);
     }
 
-    @Override
     public String getStartDate() {
-        return startDate.get();
+        return _startDate.get();
     }
 
-    @Override
     public StringProperty startDateProperty() {
-        return startDate;
+        return _startDate;
     }
 
-    @Override
     public void setStartDate(String startDate) {
-        this.startDate.set(startDate);
+        this._startDate.set(startDate);
     }
 
-    @Override
     public int getNumberOfOscars() {
-        return numberOfOscars.get();
+        return _numberOfOscars.get();
     }
 
-    @Override
     public IntegerProperty numberOfOscarsProperty() {
-        return numberOfOscars;
+        return _numberOfOscars;
     }
 
-    @Override
     public void setNumberOfOscars(int numberOfOscars) {
-        this.numberOfOscars.set(numberOfOscars);
+        this._numberOfOscars.set(numberOfOscars);
     }
 }
