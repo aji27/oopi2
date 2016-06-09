@@ -41,7 +41,9 @@ public class OscarAppPresenter implements Presenter {
                 _view.setYear(_selectedItem.getYearOfAward());
                 _view.setTitle(_selectedItem.getTitle());
                 _view.setDirector(_selectedItem.getDirector());
+                _view.setDirectorHeading(String.format("von %s", _selectedItem.getDirector()));
                 _view.setMainActor(_selectedItem.getMainActor());
+                _view.setMainActorHeading(String.format("mit %s",_selectedItem.getMainActor()));
                 _view.setCountry(_selectedItem.getCountry());
                 _view.setNumberOfOscars(_selectedItem.getNumberOfOscars());
                 _view.setTitleEnglish(_selectedItem.getTitleEnglish());
@@ -107,7 +109,8 @@ public class OscarAppPresenter implements Presenter {
     public void onDirectorChanged(String director) {
         if (_selectedItem != null) {
             _selectedItem.setDirector(director);
-            _view.setDirector(director);
+            _view.setDirector(_selectedItem.getDirector());
+            _view.setDirectorHeading(String.format("von %s", _selectedItem.getDirector()));
         }
     }
 
@@ -115,7 +118,8 @@ public class OscarAppPresenter implements Presenter {
     public void onMainActorChanged(String mainActor) {
         if (_selectedItem != null) {
             _selectedItem.setMainActor(mainActor);
-            _view.setMainActor(mainActor);
+            _view.setMainActor(_selectedItem.getMainActor());
+            _view.setMainActorHeading(String.format("mit %s",_selectedItem.getMainActor()));
         }
     }
 

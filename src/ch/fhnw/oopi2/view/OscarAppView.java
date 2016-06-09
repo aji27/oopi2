@@ -93,14 +93,22 @@ public class OscarAppView extends GridPane implements View {
 
     @Override
     public void setDirector(String director) {
-        _lblDirector.setText(director);
         _tfDirector.setText(director);
     }
 
     @Override
+    public void setDirectorHeading(String directorHeading) {
+        _lblDirector.setText(directorHeading);
+    }
+
+    @Override
     public void setMainActor(String mainActor) {
-        _lblMainActor.setText(mainActor);
         _tfMainActor.setText(mainActor);
+    }
+
+    @Override
+    public void setMainActorHeading(String mainActorHeading) {
+        _lblMainActor.setText(mainActorHeading);
     }
 
     @Override
@@ -295,6 +303,7 @@ public class OscarAppView extends GridPane implements View {
         _gpMovie.getColumnConstraints().add(_gpCol);
 
         _lblYear = new Label();
+        _lblYear.setStyle("-fx-font-size: 24px;-fx-font-weight: bold;-fx-wrap-text: true;");
         _gpMovie.add(_lblYear, 0, 0, 2, 1);
 
         _hbCountry = new HBox();
@@ -307,12 +316,15 @@ public class OscarAppView extends GridPane implements View {
         _gpMovie.add(hbPoster, 3, 0, 1, 5);
 
         _lblTitle = new Label();
+        _lblTitle.setStyle("-fx-font-size: 36px;-fx-font-weight: bold;-fx-wrap-text: true;");
         _gpMovie.add(_lblTitle, 0, 1, 3, 1);
 
         _lblDirector = new Label();
+        _lblDirector.setStyle("-fx-font-size: 24px;-fx-font-weight: bold;-fx-wrap-text: true;");
         _gpMovie.add(_lblDirector, 0, 2, 3, 1);
 
         _lblMainActor = new Label();
+        _lblMainActor.setStyle("-fx-font-size: 24px;-fx-font-weight: bold;-fx-wrap-text: true;");
         _gpMovie.add(_lblMainActor, 0, 3, 3, 1);
 
         _hbOscars = new HBox();

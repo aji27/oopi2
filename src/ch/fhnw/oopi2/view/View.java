@@ -22,7 +22,11 @@ public interface View {
 
     void setDirector(String director);
 
+    void setDirectorHeading(String directorHeading);
+
     void setMainActor(String mainActor);
+
+    void setMainActorHeading(String mainActorHeading);
 
     void setTitleEnglish(String titleEnglish);
 
