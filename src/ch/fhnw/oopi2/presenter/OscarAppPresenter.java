@@ -2,11 +2,13 @@ package ch.fhnw.oopi2.presenter;
 
 import ch.fhnw.oopi2.model.Model;
 import ch.fhnw.oopi2.model.Movie;
+import ch.fhnw.oopi2.model.MovieImpl;
 import ch.fhnw.oopi2.view.View;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -40,35 +42,12 @@ public class OscarAppPresenter implements Presenter {
             Movie item = _model.getById(movieId);
             if (item != null) {
                 _selectedItem = item;
-
-                _view.showMovieDetailPane();
-
-                _view.setPoster(_selectedItem.getId());
-                _view.setYear(_selectedItem.getYearOfAward());
-                _view.setTitle(_selectedItem.getTitle());
-                _view.setDirector(_selectedItem.getDirector());
-                _view.setDirectorHeading(String.format("von %s", _selectedItem.getDirector()));
-                _view.setMainActor(_selectedItem.getMainActor());
-                _view.setMainActorHeading(String.format("mit %s",_selectedItem.getMainActor()));
-                _view.setCountry(_selectedItem.getCountry());
-                _view.setNumberOfOscars(_selectedItem.getNumberOfOscars());
-                _view.setTitleEnglish(_selectedItem.getTitleEnglish());
-                _view.setGenre(_selectedItem.getGenre());
-                _view.setYearOfProduction(_selectedItem.getYearOfProduction());
-                _view.setDuration(_selectedItem.getDuration());
-                _view.setFsk(_selectedItem.getFsk());
-
-                try {
-                    _view.setStartDate(_dateFormat.parse(_selectedItem.getStartDate()));
-                } catch (ParseException ex) {
-                    // ToDo: Log exception and notify user
-                }
             }
         } else {
             _selectedItem = null;
-
-            _view.hideMovieDetailPane();
         }
+
+        displaySelectedItem();
     }
 
     @Override
@@ -78,12 +57,27 @@ public class OscarAppPresenter implements Presenter {
 
     @Override
     public void onAddNewItemClicked() {
-
+        Movie newMovie = new MovieImpl();
+        _model.add(newMovie);
+        _model.saveChanges();
+        List<Movie> items = _model
+                .getAll()
+                .stream()
+                .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
+                .collect(Collectors.toList());
+        _view.setItems(items);
+        _selectedItem = newMovie;
+        displaySelectedItem();
     }
 
     @Override
     public void onDeleteSelectedItemClicked() {
+        if (_selectedItem != null) {
+            _model.remove(_selectedItem);
+            _model.saveChanges();
 
+            displayAllMovies();
+        }
     }
 
     @Override
@@ -99,26 +93,27 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onSearchTextChanged(String searchText) {
         if (searchText == null || searchText.equals("")) {
-            _view.setItems(_model
-                            .getAll()
-                            .stream()
-                            .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
-                            .collect(Collectors.toList()));
+            displayAllMovies();
+            return;
         }
 
         final String text = searchText.toLowerCase();
 
-        _view.setItems(_model
-                        .getAll()
-                        .stream()
-                        .filter(m -> m.getTitle().toLowerCase().contains(text)
-                                  || m.getTitleEnglish().toLowerCase().contains(text)
-                                  || m.getDirector().toLowerCase().contains(text)
-                                  || m.getMainActor().toLowerCase().contains(text)
-                                  || ((Integer)m.getYearOfAward()).toString().equals(text)
-                        )
-                        .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
-                        .collect(Collectors.toList()));
+        List<Movie> filteredItems = _model
+                .getAll()
+                .stream()
+                .filter(m -> m.getTitle().toLowerCase().contains(text)
+                        || m.getTitleEnglish().toLowerCase().contains(text)
+                        || m.getDirector().toLowerCase().contains(text)
+                        || m.getMainActor().toLowerCase().contains(text)
+                        || ((Integer)m.getYearOfAward()).toString().equals(text)
+                )
+                .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
+                .collect(Collectors.toList());
+        Movie firstOrDefault = filteredItems.stream().findFirst().orElse(null);
+        _view.setItems(filteredItems);
+        _selectedItem = firstOrDefault;
+        displaySelectedItem();
     }
 
     @Override
@@ -233,6 +228,7 @@ public class OscarAppPresenter implements Presenter {
             try {
                 _view.setStartDate(_dateFormat.parse(_selectedItem.getStartDate()));
             } catch (ParseException ex) {
+                _view.setStartDate(null);
                 // ToDo: log exception and notify user
             }
         }
@@ -250,10 +246,49 @@ public class OscarAppPresenter implements Presenter {
 
     private void initialize() {
         _view.setPresenter(this);
-        _view.setItems(_model
+        displayAllMovies();
+    }
+
+    private void displayAllMovies() {
+        List<Movie> items = _model
                 .getAll()
                 .stream()
                 .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+        Movie firstOrDefault = items.stream().findFirst().orElse(null);
+        _view.setItems(items);
+        _selectedItem = firstOrDefault;
+        displaySelectedItem();
+    }
+
+    private void displaySelectedItem() {
+        if (_selectedItem != null) {
+            _view.setSelectedItem(_selectedItem);
+            _view.showMovieDetailPane();
+
+            _view.setPoster(_selectedItem.getId());
+            _view.setYear(_selectedItem.getYearOfAward());
+            _view.setTitle(_selectedItem.getTitle());
+            _view.setDirector(_selectedItem.getDirector());
+            _view.setDirectorHeading(String.format("von %s", _selectedItem.getDirector()));
+            _view.setMainActor(_selectedItem.getMainActor());
+            _view.setMainActorHeading(String.format("mit %s",_selectedItem.getMainActor()));
+            _view.setCountry(_selectedItem.getCountry());
+            _view.setNumberOfOscars(_selectedItem.getNumberOfOscars());
+            _view.setTitleEnglish(_selectedItem.getTitleEnglish());
+            _view.setGenre(_selectedItem.getGenre());
+            _view.setYearOfProduction(_selectedItem.getYearOfProduction());
+            _view.setDuration(_selectedItem.getDuration());
+            _view.setFsk(_selectedItem.getFsk());
+
+            try {
+                _view.setStartDate(_dateFormat.parse(_selectedItem.getStartDate()));
+            } catch (ParseException ex) {
+                _view.setStartDate(null);
+                // ToDo: Log exception and notify user
+            }
+        } else {
+            _view.hideMovieDetailPane();
+        }
     }
 }

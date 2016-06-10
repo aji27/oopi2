@@ -90,6 +90,8 @@ public class OscarAppView extends GridPane implements View {
         final InputStream posterResourceStream = getClass().getResourceAsStream(String.format("../res/view/javafx/posters/%s.jpg", movieId));
         if (posterResourceStream != null) {
             _ivPoster.setImage(new Image(posterResourceStream));
+        } else {
+            _ivPoster.setImage(null);
         }
     }
 
@@ -170,7 +172,11 @@ public class OscarAppView extends GridPane implements View {
 
     @Override
     public void setStartDate(Date startDate) {
-        _dpStartDate.setValue(startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        if (startDate != null) {
+            _dpStartDate.setValue(startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+        } else {
+            _dpStartDate.setValue(null);
+        }
     }
 
     @Override
@@ -189,6 +195,11 @@ public class OscarAppView extends GridPane implements View {
                 _hbOscars.getChildren().add(spOscar);
             }
         }
+    }
+
+    @Override
+    public void setSelectedItem(Movie selectedItem) {
+        _tableView.getSelectionModel().select(selectedItem);
     }
 
     private void initialize() {
@@ -216,24 +227,29 @@ public class OscarAppView extends GridPane implements View {
 
         _btnSave = new Button();
         _btnSave.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("../res/view/javafx/icons/save.svg.png"))));
+        _btnSave.setOnMouseClicked(e -> _presenter.onSaveClicked());
         _toolBar.getItems().add(_btnSave);
         _toolBar.getItems().add(new Separator());
 
         _btnAdd = new Button();
         _btnAdd.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("../res/view/javafx/icons/add.svg.png"))));
+        _btnAdd.setOnMouseClicked(e -> _presenter.onAddNewItemClicked());
         _toolBar.getItems().add(_btnAdd);
 
         _btnRemove = new Button();
         _btnRemove.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("../res/view/javafx/icons/remove.svg.png"))));
+        _btnRemove.setOnMouseClicked(e -> _presenter.onDeleteSelectedItemClicked());
         _toolBar.getItems().add(_btnRemove);
         _toolBar.getItems().add(new Separator());
 
         _btnUndo = new Button();
         _btnUndo.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("../res/view/javafx/icons/undo.svg.png"))));
+        _btnUndo.setOnMouseClicked(e -> _presenter.onUndoClicked());
         _toolBar.getItems().add(_btnUndo);
 
         _btnRedo = new Button();
         _btnRedo.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("../res/view/javafx/icons/redo.svg.png"))));
+        _btnRedo.setOnMouseClicked(e -> _presenter.onRedoClicked());
         _toolBar.getItems().add(_btnRedo);
 
         final Pane rightSpacer = new Pane();

@@ -8,5 +8,7 @@ import java.util.List;
 public interface Model {
     Movie getById(int id);
     List<Movie> getAll();
+    void add(Movie item);
+    void remove(Movie item);
     boolean saveChanges();
 }

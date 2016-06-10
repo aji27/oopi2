@@ -47,4 +47,6 @@ public interface View {
     void setStartDate(Date startDate);
 
     void setNumberOfOscars(Integer numberOfOscars);
+
+    void setSelectedItem(Movie selectedItem);
 }
