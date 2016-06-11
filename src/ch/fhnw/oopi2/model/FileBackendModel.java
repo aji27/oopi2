@@ -154,8 +154,11 @@ public class FileBackendModel implements Model {
                         movie.setDuration(Integer.parseInt(values[8]));
                         movie.setFsk(Integer.parseInt(values[9]));
                         movie.setGenre(values[10]);
-                        movie.setStartDate(values[11]);
                         movie.setNumberOfOscars(Integer.parseInt(values[12]));
+
+                        if (!values[11].equals("-")) {
+                            movie.setStartDate(values[11]);
+                        }
 
                         synchronized (_syncCollectionAccess) {
                             _movies.add(movie);

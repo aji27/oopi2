@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -18,11 +19,13 @@ import java.util.stream.Collectors;
  */
 public class OscarAppPresenter implements Presenter {
 
+    private final SimpleDateFormat _dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    final int LEVENSHTEIN_MAX_DISTANCE = 1;
+
     private final View _view;
     private final Model _model;
-    private final SimpleDateFormat _dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    private final int LEVENSHTEIN_MAX_DISTANCE = 1;
 
+    private final CommandController _controller;
     private Movie _selectedItem;
 
     public OscarAppPresenter(View view, Model model) {
@@ -35,22 +38,47 @@ public class OscarAppPresenter implements Presenter {
 
         _view = view;
         _model = model;
+        _controller = new CommandController();
 
         initialize();
     }
 
     @Override
     public void onSelectedItemChanged(Integer movieId) {
-        if (movieId > -1) {
-            Movie item = _model.getById(movieId);
-            if (item != null) {
-                _selectedItem = item;
-            }
-        } else {
-            _selectedItem = null;
-        }
+        if (movieId == -1 && _selectedItem == null)
+            return;
 
-        displaySelectedItem();
+        if (_selectedItem != null && _selectedItem.getId() == movieId)
+            return;
+
+        Command changeSelectedItemCommand = new Command() {
+            private Movie _oldSelectedItem;
+
+            @Override
+            public void execute() {
+                _oldSelectedItem = _selectedItem;
+
+                if (movieId > -1) {
+                    Movie item = _model.getById(movieId);
+                    if (item != null) {
+                        _selectedItem = item;
+                    }
+                } else {
+                    _selectedItem = null;
+                }
+
+                displaySelectedItem();
+
+            }
+
+            @Override
+            public void undo() {
+                _selectedItem = _oldSelectedItem;
+                displaySelectedItem();
+            }
+        };
+
+        execute(changeSelectedItemCommand);
     }
 
     @Override
@@ -60,43 +88,75 @@ public class OscarAppPresenter implements Presenter {
 
     @Override
     public void onAddNewItemClicked() {
-        Movie newMovie = new MovieImpl();
-        _model.add(newMovie);
-        _model.saveChanges();
-        List<Movie> items = getSortedMovies();
-        _view.setItems(items);
-        _selectedItem = newMovie;
-        displaySelectedItem();
-        _view.scrollToItem(_selectedItem);
+
+        Command addNewItemCommand = new Command() {
+            private Movie _oldSelectedItem;
+
+            @Override
+            public void execute() {
+                _oldSelectedItem = _selectedItem;
+
+                Movie newMovie = new MovieImpl();
+                _model.add(newMovie);
+
+                displayAllMoviesAndSelect(newMovie);
+            }
+
+            @Override
+            public void undo() {
+                _model.remove(_selectedItem);
+                displayAllMoviesAndSelect(_oldSelectedItem);
+            }
+        };
+
+        execute(addNewItemCommand);
     }
 
     @Override
     public void onDeleteSelectedItemClicked() {
-        if (_selectedItem != null) {
-            List<Movie> items = getSortedMovies();
-            Integer size = items.size();
-            Integer idxOfNext = items.indexOf(_selectedItem) + 1;
 
-            _model.remove(_selectedItem);
-            _model.saveChanges();
+        Command deleteSelectedItemCommand = new Command() {
+            private Movie _oldSelectedItem;
 
-            displayAllMovies();
+            @Override
+            public void execute() {
+                _oldSelectedItem = _selectedItem;
 
-            if (size > 1 && idxOfNext <= size - 1) {
-                _selectedItem = items.get(idxOfNext);
-                displaySelectedItem();
+                if (_selectedItem != null) {
+                    List<Movie> items = getSortedMovies();
+                    Integer size = items.size();
+                    Integer idxOfNext = items.indexOf(_selectedItem) + 1;
+
+                    _model.remove(_selectedItem);
+                    displayAllMovies();
+
+                    if (size > 1 && idxOfNext <= size - 1) {
+                        _selectedItem = items.get(idxOfNext);
+                        displaySelectedItem();
+                    }
+                }
             }
-        }
+
+            @Override
+            public void undo() {
+                if (_oldSelectedItem != null) {
+                    _model.add(_oldSelectedItem);
+                    displayAllMoviesAndSelect(_oldSelectedItem);
+                }
+            }
+        };
+
+        execute(deleteSelectedItemCommand);
     }
 
     @Override
     public void onUndoClicked() {
-
+        _controller.undo();
     }
 
     @Override
     public void onRedoClicked() {
-
+        _controller.redo();
     }
 
     @Override
@@ -127,114 +187,386 @@ public class OscarAppPresenter implements Presenter {
 
     @Override
     public void onYearChanged(Integer year) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            _selectedItem.setYearOfAward(year);
-            displayYear();
-        }
+        if (_selectedItem != null && Objects.equals(year, _selectedItem.getYearOfAward()))
+            return;
+
+        Command changeYearCommand = new Command() {
+
+            private Integer oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getYearOfAward();
+                    _selectedItem.setYearOfAward(year);
+                    displayYear();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    _selectedItem.setYearOfAward(oldValue);
+                    displayYear();
+                }
+            }
+        };
+
+        execute(changeYearCommand);
     }
 
     @Override
     public void onTitleChanged(String title) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            _selectedItem.setTitle(title);
-            displayTitle();
-        }
+        if (_selectedItem != null && Objects.equals(title, _selectedItem.getTitle()))
+            return;
+
+        Command changeTitleCommand = new Command() {
+            private String oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getTitle();
+                    _selectedItem.setTitle(title);
+                    displayTitle();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    _selectedItem.setTitle(oldValue);
+                    displayTitle();
+                }
+            }
+        };
+
+        execute(changeTitleCommand);
     }
 
     @Override
     public void onDirectorChanged(String director) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            _selectedItem.setDirector(director);
-            displayDirector();
-        }
+        if (_selectedItem != null && Objects.equals(director, _selectedItem.getDirector()))
+            return;
+
+        Command changeDirectorCommand = new Command() {
+            private String oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getDirector();
+                    _selectedItem.setDirector(director);
+                    displayDirector();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    _selectedItem.setDirector(oldValue);
+                    displayDirector();
+                }
+            }
+        };
+
+        execute(changeDirectorCommand);        
     }
 
     @Override
     public void onMainActorChanged(String mainActor) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            _selectedItem.setMainActor(mainActor);
-            displayMainActor();
-        }
+        if (_selectedItem != null && Objects.equals(mainActor, _selectedItem.getMainActor()))
+            return;
+
+        Command changeMainActorCommand = new Command() {
+            private String oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getMainActor();
+                    _selectedItem.setMainActor(mainActor);
+                    displayMainActor();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    _selectedItem.setMainActor(oldValue);
+                    displayMainActor();
+                }
+            }
+        };
+
+        execute(changeMainActorCommand);
     }
 
     @Override
     public void onTitleEnglishChanged(String titleEnglish) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            _selectedItem.setTitleEnglish(titleEnglish);
-            displayTitleEnglish();
-        }
+        if (_selectedItem != null && Objects.equals(titleEnglish, _selectedItem.getTitleEnglish()))
+            return;
+
+        Command changeTitleEnglishCommand = new Command() {
+            private String oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getTitleEnglish();
+                    _selectedItem.setTitleEnglish(titleEnglish);
+                    displayTitleEnglish();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    _selectedItem.setTitleEnglish(oldValue);
+                    displayTitleEnglish();
+                }
+            }
+        };
+        
+        execute(changeTitleEnglishCommand);
     }
 
     @Override
     public void onGenreChanged(String genre) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            _selectedItem.setGenre(genre);
-            displayGenre();
-        }
+        if (_selectedItem != null && Objects.equals(genre, _selectedItem.getGenre()))
+            return;
+
+        Command changeGenreCommand = new Command() {
+            private String oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getGenre();
+                    _selectedItem.setGenre(genre);
+                    displayGenre();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    _selectedItem.setGenre(oldValue);
+                    displayGenre();
+                }
+            }
+        };
+
+        execute(changeGenreCommand);
     }
 
     @Override
     public void onYearOfProductionChanged(Integer yearOfProduction) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            _selectedItem.setYearOfProduction(yearOfProduction);
-            displayYearOfProduction();
-        }
+        if (_selectedItem != null && Objects.equals(yearOfProduction, _selectedItem.getYearOfProduction()))
+            return;
+
+        Command changeYearOfProductionCommand = new Command() {
+            private Integer oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getYearOfProduction();
+                    _selectedItem.setYearOfProduction(yearOfProduction);
+                    displayYearOfProduction();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    _selectedItem.setYearOfProduction(oldValue);
+                    displayYearOfProduction();
+                }
+            }
+        };
+
+        execute(changeYearOfProductionCommand);
     }
 
     @Override
     public void onCountryChanged(String country) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            _selectedItem.setCountry(country);
-            displayCountry();
-        }
+        if (_selectedItem != null && Objects.equals(country, _selectedItem.getCountry()))
+            return;
+
+        Command changeCountryCommand = new Command() {
+            private String oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getCountry();
+                    _selectedItem.setCountry(country);
+                    displayCountry();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    _selectedItem.setCountry(oldValue);
+                    displayCountry();
+                }
+            }
+        };
+
+        execute(changeCountryCommand);
     }
 
     @Override
     public void onDurationChanged(Integer duration) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            _selectedItem.setDuration(duration);
-            displayDuration();
-        }
+        if (_selectedItem != null && Objects.equals(duration, _selectedItem.getDuration()))
+            return;
+
+        Command changeDurationCommand = new Command() {
+            private Integer oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getDuration();
+                    _selectedItem.setDuration(duration);
+                    displayDuration();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    _selectedItem.setDuration(oldValue);
+                    displayDuration();
+                }
+            }
+        };
+        
+        execute(changeDurationCommand);
     }
 
     @Override
     public void onFskChanged(Integer fsk) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            _selectedItem.setFsk(fsk);
-            displayFsk();
-        }
+        if (_selectedItem != null && Objects.equals(fsk, _selectedItem.getFsk()))
+            return;
+
+        Command changeFskCommand = new Command() {
+            private Integer oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getFsk();
+                    _selectedItem.setFsk(fsk);
+                    displayFsk();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    _selectedItem.setFsk(oldValue);
+                    displayFsk();
+                }
+            }
+        };
+
+        execute(changeFskCommand);
     }
 
     @Override
     public void onStartDateChanged(Date startDate) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            if (startDate != null) {
-                _selectedItem.setStartDate(_dateFormat.format(startDate));
-            } else {
-                _selectedItem.setStartDate(null);
-            }
-            displayStartDate();
+        if (_selectedItem != null)
+        {
+            if (startDate == null && (_selectedItem.getStartDate() == null || _selectedItem.getStartDate().equals("")))
+                return;
+
+            if (_dateFormat.format(startDate).equals(_selectedItem.getStartDate()))
+                return;
         }
+
+        Command changeStartDateCommand = new Command() {
+            private String oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getStartDate();
+                    if (startDate != null) {
+                        _selectedItem.setStartDate(_dateFormat.format(startDate));
+                    } else {
+                        _selectedItem.setStartDate(null);
+                    }
+                    displayStartDate();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+                    _selectedItem.setStartDate(oldValue);
+                    displayStartDate();
+                }
+            }
+        };
+
+        execute(changeStartDateCommand);
     }
 
     @Override
     public void onNumberOfOscarsChanged(Integer numberOfOscars) {
-        if (_selectedItem != null) {
-            // ToDo: sanity check
-            _selectedItem.setNumberOfOscars(numberOfOscars);
-            displayNumberOfOscars();
-        }
+        if (_selectedItem != null && Objects.equals(numberOfOscars, _selectedItem.getNumberOfOscars()))
+            return;
+
+        Command changeNumberOfOscarsCommand = new Command() {
+            private Integer oldValue;
+
+            @Override
+            public void execute() {
+                if (_selectedItem != null) {
+                    // ToDo: sanity check
+
+                    oldValue = _selectedItem.getNumberOfOscars();
+                    _selectedItem.setNumberOfOscars(numberOfOscars);
+                    displayNumberOfOscars();
+                }
+            }
+
+            @Override
+            public void undo() {
+                if (_selectedItem != null) {
+                    _selectedItem.setNumberOfOscars(oldValue);
+                    displayNumberOfOscars();
+                }
+            }
+        };
+
+        execute(changeNumberOfOscarsCommand);
     }
 
     private void initialize() {
@@ -256,6 +588,13 @@ public class OscarAppPresenter implements Presenter {
         Movie firstOrDefault = items.stream().findFirst().orElse(null);
         _view.setItems(items);
         _selectedItem = firstOrDefault;
+        displaySelectedItem();
+    }
+
+    private void displayAllMoviesAndSelect(Movie item) {
+        List<Movie> items = getSortedMovies();
+        _view.setItems(items);
+        _selectedItem = item;
         displaySelectedItem();
     }
 
@@ -343,5 +682,13 @@ public class OscarAppPresenter implements Presenter {
 
     private void displayNumberOfOscars() {
         _view.setNumberOfOscars(_selectedItem.getNumberOfOscars());
+    }
+
+    private void execute(Command command) {
+        if (command == null)
+            throw new IllegalArgumentException("Argument command cannot be null.");
+
+        _controller.execute(command);
+        // ToDo: update view undo / redo list
     }
 }
