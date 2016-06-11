@@ -171,10 +171,18 @@ public class OscarAppPresenter implements Presenter {
         List<Movie> filteredItems = _model
                 .getAll()
                 .stream()
-                .filter(m -> m.getTitle().toLowerCase().contains(text) || Arrays.stream(m.getTitle().toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
-                        || m.getTitleEnglish().toLowerCase().contains(text) || Arrays.stream(m.getTitleEnglish().toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
-                        || m.getDirector().toLowerCase().contains(text) || Arrays.stream(m.getDirector().toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
-                        || m.getMainActor().toLowerCase().contains(text) || Arrays.stream(m.getMainActor().replace(",", "").toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
+                .filter(m -> m.getTitle().toLowerCase().contains(text)
+                        || Levenshtein.distance(m.getTitle().toLowerCase(), text) <= LEVENSHTEIN_MAX_DISTANCE
+                        || Arrays.stream(m.getTitle().toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
+                        || m.getTitleEnglish().toLowerCase().contains(text)
+                        || Levenshtein.distance(m.getTitleEnglish().toLowerCase(), text) <= LEVENSHTEIN_MAX_DISTANCE
+                        || Arrays.stream(m.getTitleEnglish().toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
+                        || m.getDirector().toLowerCase().contains(text)
+                        || Levenshtein.distance(m.getDirector().toLowerCase(), text) <= LEVENSHTEIN_MAX_DISTANCE
+                        || Arrays.stream(m.getDirector().toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
+                        || m.getMainActor().toLowerCase().contains(text)
+                        || Levenshtein.distance(m.getMainActor().toLowerCase(), text) <= LEVENSHTEIN_MAX_DISTANCE
+                        || Arrays.stream(m.getMainActor().replace(",", "").toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
                         || ((Integer)m.getYearOfAward()).toString().equals(text)
                 )
                 .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
@@ -689,6 +697,7 @@ public class OscarAppPresenter implements Presenter {
             throw new IllegalArgumentException("Argument command cannot be null.");
 
         _controller.execute(command);
+
         // ToDo: update view undo / redo list
     }
 }

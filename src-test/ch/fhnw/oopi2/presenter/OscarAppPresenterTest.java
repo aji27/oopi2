@@ -99,12 +99,125 @@ public class OscarAppPresenterTest {
 
     @Test
     public void testOnUndoClicked() {
-        //ToDo
+        _selectedItem = _model.getAll().get(0);
+        _presenter.onSelectedItemChanged(_selectedItem.getId());
+
+        int oldYear = _selectedItem.getYearOfAward();
+        _presenter.onYearChanged(2016);
+        _presenter.onUndoClicked();
+        Assert.assertEquals(oldYear, _selectedItem.getYearOfAward());
+        
+        String oldTitle = _selectedItem.getTitle();
+        _presenter.onTitleChanged("Title");
+        _presenter.onUndoClicked();
+        Assert.assertEquals(oldTitle, _selectedItem.getTitle());
+
+        String oldDirector = _selectedItem.getDirector();
+        _presenter.onDirectorChanged("Director");
+        _presenter.onUndoClicked();
+        Assert.assertEquals(oldDirector, _selectedItem.getDirector());
+
+        String oldMainActor = _selectedItem.getMainActor();
+        _presenter.onMainActorChanged("MainActor");
+        _presenter.onUndoClicked();
+        Assert.assertEquals(oldMainActor, _selectedItem.getMainActor());
+
+        String oldGenre = _selectedItem.getGenre();
+        _presenter.onGenreChanged("Genre");
+        _presenter.onUndoClicked();
+        Assert.assertEquals(oldGenre, _selectedItem.getGenre());
+
+        int oldYearOfProduction = _selectedItem.getYearOfProduction();
+        _presenter.onYearOfProductionChanged(2016);
+        _presenter.onUndoClicked();
+        Assert.assertEquals(oldYearOfProduction, _selectedItem.getYearOfProduction());
+
+        String oldCountry = _selectedItem.getCountry();
+        _presenter.onCountryChanged("Country");
+        _presenter.onUndoClicked();
+        Assert.assertEquals(oldCountry, _selectedItem.getCountry());
+
+        int oldDuration = _selectedItem.getDuration();
+        _presenter.onDurationChanged(150);
+        _presenter.onUndoClicked();
+        Assert.assertEquals(oldDuration, _selectedItem.getDuration());
+
+        int oldFsk = _selectedItem.getFsk();
+        _presenter.onFskChanged(18);
+        _presenter.onUndoClicked();
+        Assert.assertEquals(oldFsk, _selectedItem.getFsk());
+
+        String oldStartDate = _selectedItem.getStartDate();
+        _presenter.onStartDateChanged(new Date());
+        _presenter.onUndoClicked();
+        Assert.assertEquals(oldStartDate, _selectedItem.getStartDate());
+
+        int oldNumberOfOscars = _selectedItem.getNumberOfOscars();
+        _presenter.onNumberOfOscarsChanged(5);
+        _presenter.onUndoClicked();
+        Assert.assertEquals(oldNumberOfOscars, _selectedItem.getNumberOfOscars());
     }
 
     @Test
     public void testOnRedoClicked() {
-        //ToDo
+        _selectedItem = _model.getAll().get(0);
+        _presenter.onSelectedItemChanged(_selectedItem.getId());
+
+        _presenter.onYearChanged(2016);
+        _presenter.onUndoClicked();
+        _presenter.onRedoClicked();
+        Assert.assertEquals(2016, _selectedItem.getYearOfAward());
+
+        _presenter.onTitleChanged("Title");
+        _presenter.onUndoClicked();
+        _presenter.onRedoClicked();
+        Assert.assertEquals("Title", _selectedItem.getTitle());
+
+        _presenter.onDirectorChanged("Director");
+        _presenter.onUndoClicked();
+        _presenter.onRedoClicked();
+        Assert.assertEquals("Director", _selectedItem.getDirector());
+
+        _presenter.onMainActorChanged("MainActor");
+        _presenter.onUndoClicked();
+        _presenter.onRedoClicked();
+        Assert.assertEquals("MainActor", _selectedItem.getMainActor());
+
+        _presenter.onGenreChanged("Genre");
+        _presenter.onUndoClicked();
+        _presenter.onRedoClicked();
+        Assert.assertEquals("Genre", _selectedItem.getGenre());
+
+        _presenter.onYearOfProductionChanged(2016);
+        _presenter.onUndoClicked();
+        _presenter.onRedoClicked();
+        Assert.assertEquals(2016, _selectedItem.getYearOfProduction());
+
+        _presenter.onCountryChanged("Country");
+        _presenter.onUndoClicked();
+        _presenter.onRedoClicked();
+        Assert.assertEquals("Country", _selectedItem.getCountry());
+
+        _presenter.onDurationChanged(150);
+        _presenter.onUndoClicked();
+        _presenter.onRedoClicked();
+        Assert.assertEquals(150, _selectedItem.getDuration());
+
+        _presenter.onFskChanged(18);
+        _presenter.onUndoClicked();
+        _presenter.onRedoClicked();
+        Assert.assertEquals(18, _selectedItem.getFsk());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        _presenter.onStartDateChanged(new Date());
+        _presenter.onUndoClicked();
+        _presenter.onRedoClicked();
+        Assert.assertEquals(dateFormat.format(new Date()), _selectedItem.getStartDate());
+
+        _presenter.onNumberOfOscarsChanged(5);
+        _presenter.onUndoClicked();
+        _presenter.onRedoClicked();
+        Assert.assertEquals(5, _selectedItem.getNumberOfOscars());
     }
 
     @Test
@@ -117,11 +230,11 @@ public class OscarAppPresenterTest {
         _presenter.onSearchTextChanged(null);
         Assert.assertEquals(_model.getAll().size(), _view.getItems().size());
 
-        _presenter.onSearchTextChanged("Club");
+        _presenter.onSearchTextChanged("Fight Clup");
         Assert.assertEquals(1, _view.getItems().size());
 
-        _presenter.onSearchTextChanged("o");
-        Assert.assertEquals(2, _view.getItems().size());
+        _presenter.onSearchTextChanged("Rewolver");
+        Assert.assertEquals(1, _view.getItems().size());
     }
 
     @Test
