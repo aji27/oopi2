@@ -3,10 +3,12 @@ package ch.fhnw.oopi2.presenter;
 import ch.fhnw.oopi2.model.Model;
 import ch.fhnw.oopi2.model.Movie;
 import ch.fhnw.oopi2.model.MovieImpl;
+import ch.fhnw.oopi2.util.Levenshtein;
 import ch.fhnw.oopi2.view.View;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +21,7 @@ public class OscarAppPresenter implements Presenter {
     private final View _view;
     private final Model _model;
     private final SimpleDateFormat _dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private final int LEVENSHTEIN_MAX_DISTANCE = 1;
 
     private Movie _selectedItem;
 
@@ -108,10 +111,10 @@ public class OscarAppPresenter implements Presenter {
         List<Movie> filteredItems = _model
                 .getAll()
                 .stream()
-                .filter(m -> m.getTitle().toLowerCase().contains(text)
-                        || m.getTitleEnglish().toLowerCase().contains(text)
-                        || m.getDirector().toLowerCase().contains(text)
-                        || m.getMainActor().toLowerCase().contains(text)
+                .filter(m -> m.getTitle().toLowerCase().contains(text) || Arrays.stream(m.getTitle().toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
+                        || m.getTitleEnglish().toLowerCase().contains(text) || Arrays.stream(m.getTitleEnglish().toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
+                        || m.getDirector().toLowerCase().contains(text) || Arrays.stream(m.getDirector().toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
+                        || m.getMainActor().toLowerCase().contains(text) || Arrays.stream(m.getMainActor().replace(",", "").toLowerCase().split(" ")).anyMatch(s -> Levenshtein.distance(s, text) <= LEVENSHTEIN_MAX_DISTANCE)
                         || ((Integer)m.getYearOfAward()).toString().equals(text)
                 )
                 .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
