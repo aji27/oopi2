@@ -19,12 +19,16 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 /**
  * Created by ajant on 03.05.2016.
  */
 public class OscarAppView extends GridPane implements View {
+
+    private final ResourceBundle STRINGS = ResourceBundle.getBundle(
+            "ch.fhnw.oopi2.res.localization.Strings");
 
     private ToolBar _toolBar;
     private Button _btnSave;
@@ -265,7 +269,7 @@ public class OscarAppView extends GridPane implements View {
         _toolBar.getItems().add(rightSpacer);
 
         _tfSearch = new TextField();
-        _tfSearch.setPromptText("Suche...");
+        _tfSearch.setPromptText(STRINGS.getString("Search"));
         _toolBar.getItems().add(_tfSearch);
 
         _splitPane = new SplitPane();
@@ -278,7 +282,7 @@ public class OscarAppView extends GridPane implements View {
         final TableColumn tcRowState = new TableColumn<Movie, Image>();
         _tableView.getColumns().add(tcRowState);
 
-        final TableColumn tcYear = new TableColumn<Movie, Integer>("Jahr");
+        final TableColumn tcYear = new TableColumn<Movie, Integer>(STRINGS.getString("Year"));
         tcYear.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Movie, Integer>, ObservableValue<Integer>>() {
             @Override
             public ObservableValue<Integer> call(TableColumn.CellDataFeatures<Movie, Integer> p) {
@@ -287,7 +291,7 @@ public class OscarAppView extends GridPane implements View {
         });
         _tableView.getColumns().add(tcYear);
 
-        final TableColumn tcTitle = new TableColumn<Movie, String>("Titel");
+        final TableColumn tcTitle = new TableColumn<Movie, String>(STRINGS.getString("Title"));
         tcTitle.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Movie, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Movie, String> p) {
@@ -296,7 +300,7 @@ public class OscarAppView extends GridPane implements View {
         });
         _tableView.getColumns().add(tcTitle);
 
-        final TableColumn tcDirector = new TableColumn<Movie, String>("Regisseur");
+        final TableColumn tcDirector = new TableColumn<Movie, String>(STRINGS.getString("Director"));
         tcDirector.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Movie, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Movie, String> p) {
@@ -305,7 +309,7 @@ public class OscarAppView extends GridPane implements View {
         });
         _tableView.getColumns().add(tcDirector);
 
-        final TableColumn tcMainActor = new TableColumn<Movie, String>("Hauptdarsteller");
+        final TableColumn tcMainActor = new TableColumn<Movie, String>(STRINGS.getString("MainActor"));
         tcMainActor.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Movie, String>, ObservableValue<String>>() {
             @Override
             public ObservableValue<String> call(TableColumn.CellDataFeatures<Movie, String> p) {
@@ -379,42 +383,42 @@ public class OscarAppView extends GridPane implements View {
         _spYear = new Spinner<>();
         _spYear
             .setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1929, LocalDateTime.now().getYear()));
-        gpMovieEditable.add(new Label("Jahr"), 0, 5); // Anmerkung des Entwicklers: Mir ist bewusst, dass der Row-Index ab hier 'eigentlich' falsch ist, aber Java stellt es korrekt dar :-).
+        gpMovieEditable.add(new Label(STRINGS.getString("Year")), 0, 5); // Anmerkung des Entwicklers: Mir ist bewusst, dass der Row-Index ab hier 'eigentlich' falsch ist, aber Java stellt es korrekt dar :-).
         gpMovieEditable.add(_spYear, 1, 5);
 
         _tfTitle = new TextField();
-        gpMovieEditable.add(new Label("Titel"), 0, 6);
+        gpMovieEditable.add(new Label(STRINGS.getString("Title")), 0, 6);
         gpMovieEditable.add(_tfTitle, 1, 6, 3, 1);
 
         _tfDirector = new TextField();
-        gpMovieEditable.add(new Label("Regisseur"), 0, 7);
+        gpMovieEditable.add(new Label(STRINGS.getString("Director")), 0, 7);
         gpMovieEditable.add(_tfDirector, 1, 7, 3, 1);
 
         _tfMainActor = new TextField();
-        gpMovieEditable.add(new Label("Hauptdarsteller"), 0, 8);
+        gpMovieEditable.add(new Label(STRINGS.getString("MainActor")), 0, 8);
         gpMovieEditable.add(_tfMainActor, 1, 8, 3, 1);
 
         _tfTitleEnglish = new TextField();
-        gpMovieEditable.add(new Label("englischer Titel"), 0, 9);
+        gpMovieEditable.add(new Label(STRINGS.getString("TitleEnglish")), 0, 9);
         gpMovieEditable.add(_tfTitleEnglish, 1, 9, 3, 1);
 
         _tfGenre = new TextField();
-        gpMovieEditable.add(new Label("Genre"), 0, 10);
+        gpMovieEditable.add(new Label(STRINGS.getString("Genre")), 0, 10);
         gpMovieEditable.add(_tfGenre, 1, 10);
 
         _spYearOfProduction = new Spinner();
         _spYearOfProduction
                 .setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1929, LocalDateTime.now().getYear()));
-        gpMovieEditable.add(new Label("Produktionsjahr"), 2, 10);
+        gpMovieEditable.add(new Label(STRINGS.getString("YearOfProduction")), 2, 10);
         gpMovieEditable.add(_spYearOfProduction, 3, 10);
 
         _tfCountry = new TextField();
-        gpMovieEditable.add(new Label("Land"), 0, 11);
+        gpMovieEditable.add(new Label(STRINGS.getString("Country")), 0, 11);
         gpMovieEditable.add(_tfCountry, 1, 11);
 
         _spDuration = new Spinner();
         _spDuration.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 240));
-        gpMovieEditable.add(new Label("Länge (Minuten)"), 2, 11);
+        gpMovieEditable.add(new Label(STRINGS.getString("Duration")), 2, 11);
         gpMovieEditable.add(_spDuration, 3, 11);
 
         _cbFSK = new ComboBox<>();
@@ -441,16 +445,16 @@ public class OscarAppView extends GridPane implements View {
         }
         _cbFSK.setCellFactory(param -> new FskCell());
         _cbFSK.setButtonCell(new FskCell());
-        gpMovieEditable.add(new Label("FSK-Altersfreigabe"), 0, 12);
+        gpMovieEditable.add(new Label(STRINGS.getString("FSK")), 0, 12);
         gpMovieEditable.add(_cbFSK, 1, 12);
 
         _dpStartDate = new DatePicker();
-        gpMovieEditable.add(new Label("Kinostart"), 2, 12);
+        gpMovieEditable.add(new Label(STRINGS.getString("StartDate")), 2, 12);
         gpMovieEditable.add(_dpStartDate, 3, 12);
 
         _spNumberOfOscars = new Spinner<>();
         _spNumberOfOscars.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 11));
-        gpMovieEditable.add(new Label("Oscars"), 0, 13);
+        gpMovieEditable.add(new Label(STRINGS.getString("NumberOfOscars")), 0, 13);
         gpMovieEditable.add(_spNumberOfOscars, 1, 13);
 
         _splitPane.getItems().add(spMovie);

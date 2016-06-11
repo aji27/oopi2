@@ -8,10 +8,7 @@ import ch.fhnw.oopi2.view.View;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -19,8 +16,10 @@ import java.util.stream.Collectors;
  */
 public class OscarAppPresenter implements Presenter {
 
+    private final ResourceBundle STRINGS = ResourceBundle.getBundle(
+            "ch.fhnw.oopi2.res.localization.Strings");
     private final SimpleDateFormat _dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    final int LEVENSHTEIN_MAX_DISTANCE = 1;
+    private final int LEVENSHTEIN_MAX_DISTANCE = 1;
 
     private final View _view;
     private final Model _model;
@@ -642,12 +641,12 @@ public class OscarAppPresenter implements Presenter {
 
     private void displayDirector() {
         _view.setDirector(_selectedItem.getDirector());
-        _view.setDirectorHeading(String.format("von %s", _selectedItem.getDirector()));
+        _view.setDirectorHeading(String.format("%s %s", STRINGS.getString("From"), _selectedItem.getDirector()));
     }
 
     private void displayMainActor() {
         _view.setMainActor(_selectedItem.getMainActor());
-        _view.setMainActorHeading(String.format("mit %s",_selectedItem.getMainActor()));
+        _view.setMainActorHeading(String.format("%s %s", STRINGS.getString("With"), _selectedItem.getMainActor()));
     }
 
     private void displayTitleEnglish() {

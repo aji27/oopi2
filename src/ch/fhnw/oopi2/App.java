@@ -24,6 +24,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws UnsupportedEncodingException {
+        //Locale.setDefault(Locale.FRENCH);
+
         FileBackendModel.initialize();
 
         OscarAppView oscarAppView = new OscarAppView();

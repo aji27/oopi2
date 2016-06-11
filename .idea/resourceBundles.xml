@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ResourceBundleManager">
+    <file url="file://$PROJECT_DIR$/src/ch/fhnw/oopi2/res/strings/Strings.xml" />
+    <file url="file://$PROJECT_DIR$/src/ch/fhnw/oopi2/res/strings/Strings_strings.xml" />
+    <custom-resource-bundle>
+      <file value="file://$PROJECT_DIR$/src/ch/fhnw/oopi2/res/strings/Strings.xml" />
+      <file value="file://$PROJECT_DIR$/src/ch/fhnw/oopi2/res/strings/Strings_strings.xml" />
+      <base-name>Strings</base-name>
+    </custom-resource-bundle>
+  </component>
+</project>
