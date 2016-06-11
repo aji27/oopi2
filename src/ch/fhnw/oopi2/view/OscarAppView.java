@@ -75,8 +75,6 @@ public class OscarAppView extends GridPane implements View {
     public void setItems(List<Movie> items) {
         _tableView.getItems().clear();
         _tableView.getItems().addAll(items);
-
-        _tableView.getSelectionModel().selectFirst();
     }
 
     @Override
@@ -207,10 +205,25 @@ public class OscarAppView extends GridPane implements View {
     }
 
     @Override
-    public void scrollToItem(Movie item) {
-        _tableView.scrollTo(item);
+    public void scrollTo(Movie item) {
+        if (item != null)
+            _tableView.scrollTo(item);
     }
 
+    @Override
+    public void enableBtnDelete(boolean enable) {
+        _btnRemove.setDisable(!enable);
+    }
+
+    @Override
+    public void enableBtnUndo(boolean enable) {
+        _btnUndo.setDisable(!enable);
+    }
+
+    @Override
+    public void enableBtnRedo(boolean enable) {
+        _btnRedo.setDisable(!enable);
+    }
 
     private void initialize() {
         initializeComponent();
@@ -278,9 +291,6 @@ public class OscarAppView extends GridPane implements View {
 
         _tableView = new TableView();
         _tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        final TableColumn tcRowState = new TableColumn<Movie, Image>();
-        _tableView.getColumns().add(tcRowState);
 
         final TableColumn tcYear = new TableColumn<Movie, Integer>(STRINGS.getString("Year"));
         tcYear.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Movie, Integer>, ObservableValue<Integer>>() {

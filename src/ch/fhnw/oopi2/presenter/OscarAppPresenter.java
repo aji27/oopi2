@@ -1,5 +1,6 @@
 package ch.fhnw.oopi2.presenter;
 
+import ch.fhnw.oopi2.model.FSK;
 import ch.fhnw.oopi2.model.Model;
 import ch.fhnw.oopi2.model.Movie;
 import ch.fhnw.oopi2.model.MovieImpl;
@@ -28,7 +29,6 @@ public class OscarAppPresenter implements Presenter {
     private Movie _selectedItem;
 
     public OscarAppPresenter(View view, Model model) {
-
         if (view == null)
             throw new IllegalArgumentException("Argument view cannot be null.");
 
@@ -44,7 +44,7 @@ public class OscarAppPresenter implements Presenter {
 
     @Override
     public void onSelectedItemChanged(Integer movieId) {
-        if (movieId == -1 && _selectedItem == null)
+        if (movieId == -1)
             return;
 
         if (_selectedItem != null && _selectedItem.getId() == movieId)
@@ -90,20 +90,26 @@ public class OscarAppPresenter implements Presenter {
 
         Command addNewItemCommand = new Command() {
             private Movie _oldSelectedItem;
+            private Movie _newItem;
 
             @Override
             public void execute() {
                 _oldSelectedItem = _selectedItem;
 
-                Movie newMovie = new MovieImpl();
-                _model.add(newMovie);
+                _newItem = new MovieImpl();
+                _newItem.setId(-1);
+                _newItem.setYearOfAward(1929);
+                _newItem.setYearOfProduction(1929);
+                _model.add(_newItem);
+                _model.saveChanges(); // I am aware of this 'bad' design.
 
-                displayAllMoviesAndSelect(newMovie);
+                displayAllMoviesAndSelect(_newItem);
             }
 
             @Override
             public void undo() {
-                _model.remove(_selectedItem);
+                _model.remove(_newItem);
+                _model.saveChanges(); // I am aware of this 'bad' design.
                 displayAllMoviesAndSelect(_oldSelectedItem);
             }
         };
@@ -127,6 +133,7 @@ public class OscarAppPresenter implements Presenter {
                     Integer idxOfNext = items.indexOf(_selectedItem) + 1;
 
                     _model.remove(_selectedItem);
+                    _model.saveChanges(); // I am aware of this 'bad' design.
                     displayAllMovies();
 
                     if (size > 1 && idxOfNext <= size - 1) {
@@ -140,6 +147,7 @@ public class OscarAppPresenter implements Presenter {
             public void undo() {
                 if (_oldSelectedItem != null) {
                     _model.add(_oldSelectedItem);
+                    _model.saveChanges(); // I am aware of this 'bad' design.
                     displayAllMoviesAndSelect(_oldSelectedItem);
                 }
             }
@@ -151,11 +159,13 @@ public class OscarAppPresenter implements Presenter {
     @Override
     public void onUndoClicked() {
         _controller.undo();
+        enableDisableButtons();
     }
 
     @Override
     public void onRedoClicked() {
         _controller.redo();
+        enableDisableButtons();
     }
 
     @Override
@@ -197,6 +207,9 @@ public class OscarAppPresenter implements Presenter {
         if (_selectedItem != null && Objects.equals(year, _selectedItem.getYearOfAward()))
             return;
 
+        if (year < 1929 || year > Calendar.getInstance().get(Calendar.YEAR))
+            return;
+
         Command changeYearCommand = new Command() {
 
             private Integer oldValue;
@@ -204,8 +217,6 @@ public class OscarAppPresenter implements Presenter {
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getYearOfAward();
                     _selectedItem.setYearOfAward(year);
                     displayYear();
@@ -235,8 +246,6 @@ public class OscarAppPresenter implements Presenter {
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getTitle();
                     _selectedItem.setTitle(title);
                     displayTitle();
@@ -266,8 +275,6 @@ public class OscarAppPresenter implements Presenter {
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getDirector();
                     _selectedItem.setDirector(director);
                     displayDirector();
@@ -297,8 +304,6 @@ public class OscarAppPresenter implements Presenter {
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getMainActor();
                     _selectedItem.setMainActor(mainActor);
                     displayMainActor();
@@ -328,8 +333,6 @@ public class OscarAppPresenter implements Presenter {
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getTitleEnglish();
                     _selectedItem.setTitleEnglish(titleEnglish);
                     displayTitleEnglish();
@@ -359,8 +362,6 @@ public class OscarAppPresenter implements Presenter {
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getGenre();
                     _selectedItem.setGenre(genre);
                     displayGenre();
@@ -384,14 +385,15 @@ public class OscarAppPresenter implements Presenter {
         if (_selectedItem != null && Objects.equals(yearOfProduction, _selectedItem.getYearOfProduction()))
             return;
 
+        if (yearOfProduction < 1929 || yearOfProduction > Calendar.getInstance().get(Calendar.YEAR))
+            return;
+
         Command changeYearOfProductionCommand = new Command() {
             private Integer oldValue;
 
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getYearOfProduction();
                     _selectedItem.setYearOfProduction(yearOfProduction);
                     displayYearOfProduction();
@@ -421,8 +423,6 @@ public class OscarAppPresenter implements Presenter {
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getCountry();
                     _selectedItem.setCountry(country);
                     displayCountry();
@@ -446,14 +446,15 @@ public class OscarAppPresenter implements Presenter {
         if (_selectedItem != null && Objects.equals(duration, _selectedItem.getDuration()))
             return;
 
+        if (duration < 0 || duration > 240)
+            return;
+
         Command changeDurationCommand = new Command() {
             private Integer oldValue;
 
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getDuration();
                     _selectedItem.setDuration(duration);
                     displayDuration();
@@ -477,14 +478,15 @@ public class OscarAppPresenter implements Presenter {
         if (_selectedItem != null && Objects.equals(fsk, _selectedItem.getFsk()))
             return;
 
+        if (!Arrays.stream(FSK.values()).anyMatch(f -> f.getValue() == fsk))
+            return;
+
         Command changeFskCommand = new Command() {
             private Integer oldValue;
 
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getFsk();
                     _selectedItem.setFsk(fsk);
                     displayFsk();
@@ -520,8 +522,6 @@ public class OscarAppPresenter implements Presenter {
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getStartDate();
                     if (startDate != null) {
                         _selectedItem.setStartDate(_dateFormat.format(startDate));
@@ -535,7 +535,6 @@ public class OscarAppPresenter implements Presenter {
             @Override
             public void undo() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
                     _selectedItem.setStartDate(oldValue);
                     displayStartDate();
                 }
@@ -556,8 +555,6 @@ public class OscarAppPresenter implements Presenter {
             @Override
             public void execute() {
                 if (_selectedItem != null) {
-                    // ToDo: sanity check
-
                     oldValue = _selectedItem.getNumberOfOscars();
                     _selectedItem.setNumberOfOscars(numberOfOscars);
                     displayNumberOfOscars();
@@ -603,10 +600,12 @@ public class OscarAppPresenter implements Presenter {
         _view.setItems(items);
         _selectedItem = item;
         displaySelectedItem();
+        _view.scrollTo(_selectedItem);
     }
 
     private void displaySelectedItem() {
         _view.setSelectedItem(_selectedItem);
+        _view.enableBtnDelete(_selectedItem != null);
         if (_selectedItem != null) {
             _view.showMovieDetailPane();
             displayPoster();
@@ -696,7 +695,11 @@ public class OscarAppPresenter implements Presenter {
             throw new IllegalArgumentException("Argument command cannot be null.");
 
         _controller.execute(command);
+        enableDisableButtons();
+    }
 
-        // ToDo: update view undo / redo list
+    private void enableDisableButtons() {
+        _view.enableBtnUndo(_controller.canUndo());
+        _view.enableBtnRedo(_controller.canRedo());
     }
 }

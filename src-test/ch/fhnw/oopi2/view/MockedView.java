@@ -123,7 +123,22 @@ public class MockedView implements View {
     }
 
     @Override
-    public void scrollToItem(Movie item) {
+    public void scrollTo(Movie item) {
+
+    }
+
+    @Override
+    public void enableBtnDelete(boolean enable) {
+
+    }
+
+    @Override
+    public void enableBtnUndo(boolean enable) {
+
+    }
+
+    @Override
+    public void enableBtnRedo(boolean enable) {
 
     }
 }

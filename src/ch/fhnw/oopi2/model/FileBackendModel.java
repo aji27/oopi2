@@ -52,7 +52,7 @@ public class FileBackendModel implements Model {
         if (_movies.contains(item))
             throw new IllegalArgumentException("Item is already present in internal collection.");
 
-        if (item.getId() == 0) {
+        if (item.getId() < 0) {
             Integer newMovieId = 0;
             Movie m = _movies.stream().max((m1, m2) -> Integer.compare(m1.getId(), m2.getId())).orElse(null);
             if (m != null) {

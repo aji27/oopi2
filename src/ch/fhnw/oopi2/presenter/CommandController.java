@@ -30,6 +30,14 @@ public class CommandController {
         popExecuteAndPush(_redoList, _undoList, "redo");
     }
 
+    public boolean canUndo() {
+        return _undoList.size() > 0;
+    }
+
+    public boolean canRedo() {
+        return _redoList.size() > 0;
+    }
+
     private void popExecuteAndPush(LinkedList<Command> source, LinkedList<Command> destination, String command) {
         synchronized (_syncListAccess) {
             if (source.size() > 0) {

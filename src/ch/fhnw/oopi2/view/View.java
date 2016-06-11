@@ -30,5 +30,8 @@ public interface View {
     void setStartDate(Date startDate);
     void setNumberOfOscars(Integer numberOfOscars);
     void setSelectedItem(Movie selectedItem);
-    void scrollToItem(Movie item);
+    void scrollTo(Movie item);
+    void enableBtnDelete(boolean enable);
+    void enableBtnUndo(boolean enable);
+    void enableBtnRedo(boolean enable);
 }
