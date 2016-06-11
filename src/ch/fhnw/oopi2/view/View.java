@@ -49,4 +49,6 @@ public interface View {
     void setNumberOfOscars(Integer numberOfOscars);
 
     void setSelectedItem(Movie selectedItem);
+
+    void scrollToItem(Movie item);
 }

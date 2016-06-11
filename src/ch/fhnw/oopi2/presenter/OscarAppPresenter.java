@@ -60,23 +60,29 @@ public class OscarAppPresenter implements Presenter {
         Movie newMovie = new MovieImpl();
         _model.add(newMovie);
         _model.saveChanges();
-        List<Movie> items = _model
-                .getAll()
-                .stream()
-                .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
-                .collect(Collectors.toList());
+        List<Movie> items = getSortedMovies();
         _view.setItems(items);
         _selectedItem = newMovie;
         displaySelectedItem();
+        _view.scrollToItem(_selectedItem);
     }
 
     @Override
     public void onDeleteSelectedItemClicked() {
         if (_selectedItem != null) {
+            List<Movie> items = getSortedMovies();
+            Integer size = items.size();
+            Integer idxOfNext = items.indexOf(_selectedItem) + 1;
+
             _model.remove(_selectedItem);
             _model.saveChanges();
 
             displayAllMovies();
+
+            if (size > 1 && idxOfNext <= size - 1) {
+                _selectedItem = items.get(idxOfNext);
+                displaySelectedItem();
+            }
         }
     }
 
@@ -120,9 +126,8 @@ public class OscarAppPresenter implements Presenter {
     public void onYearChanged(Integer year) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
             _selectedItem.setYearOfAward(year);
-            _view.setYear(year);
+            displayYear();
         }
     }
 
@@ -130,9 +135,8 @@ public class OscarAppPresenter implements Presenter {
     public void onTitleChanged(String title) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
             _selectedItem.setTitle(title);
-            _view.setTitle(title);
+            displayTitle();
         }
     }
 
@@ -140,10 +144,8 @@ public class OscarAppPresenter implements Presenter {
     public void onDirectorChanged(String director) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
             _selectedItem.setDirector(director);
-            _view.setDirector(_selectedItem.getDirector());
-            _view.setDirectorHeading(String.format("von %s", _selectedItem.getDirector()));
+            displayDirector();
         }
     }
 
@@ -151,10 +153,8 @@ public class OscarAppPresenter implements Presenter {
     public void onMainActorChanged(String mainActor) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
             _selectedItem.setMainActor(mainActor);
-            _view.setMainActor(_selectedItem.getMainActor());
-            _view.setMainActorHeading(String.format("mit %s",_selectedItem.getMainActor()));
+            displayMainActor();
         }
     }
 
@@ -162,9 +162,8 @@ public class OscarAppPresenter implements Presenter {
     public void onTitleEnglishChanged(String titleEnglish) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
             _selectedItem.setTitleEnglish(titleEnglish);
-            _view.setTitleEnglish(titleEnglish);
+            displayTitleEnglish();
         }
     }
 
@@ -172,9 +171,8 @@ public class OscarAppPresenter implements Presenter {
     public void onGenreChanged(String genre) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
             _selectedItem.setGenre(genre);
-            _view.setGenre(genre);
+            displayGenre();
         }
     }
 
@@ -182,9 +180,8 @@ public class OscarAppPresenter implements Presenter {
     public void onYearOfProductionChanged(Integer yearOfProduction) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
             _selectedItem.setYearOfProduction(yearOfProduction);
-            _view.setYearOfProduction(yearOfProduction);
+            displayYearOfProduction();
         }
     }
 
@@ -192,9 +189,8 @@ public class OscarAppPresenter implements Presenter {
     public void onCountryChanged(String country) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
             _selectedItem.setCountry(country);
-            _view.setCountry(country);
+            displayCountry();
         }
     }
 
@@ -202,9 +198,8 @@ public class OscarAppPresenter implements Presenter {
     public void onDurationChanged(Integer duration) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
             _selectedItem.setDuration(duration);
-            _view.setDuration(duration);
+            displayDuration();
         }
     }
 
@@ -212,9 +207,8 @@ public class OscarAppPresenter implements Presenter {
     public void onFskChanged(Integer fsk) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
             _selectedItem.setFsk(fsk);
-            _view.setFsk(fsk);
+            displayFsk();
         }
     }
 
@@ -222,15 +216,12 @@ public class OscarAppPresenter implements Presenter {
     public void onStartDateChanged(Date startDate) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
-            _selectedItem.setStartDate(_dateFormat.format(startDate));
-
-            try {
-                _view.setStartDate(_dateFormat.parse(_selectedItem.getStartDate()));
-            } catch (ParseException ex) {
-                _view.setStartDate(null);
-                // ToDo: log exception and notify user
+            if (startDate != null) {
+                _selectedItem.setStartDate(_dateFormat.format(startDate));
+            } else {
+                _selectedItem.setStartDate(null);
             }
+            displayStartDate();
         }
     }
 
@@ -238,9 +229,8 @@ public class OscarAppPresenter implements Presenter {
     public void onNumberOfOscarsChanged(Integer numberOfOscars) {
         if (_selectedItem != null) {
             // ToDo: sanity check
-
             _selectedItem.setNumberOfOscars(numberOfOscars);
-            _view.setNumberOfOscars(numberOfOscars);
+            displayNumberOfOscars();
         }
     }
 
@@ -249,12 +239,17 @@ public class OscarAppPresenter implements Presenter {
         displayAllMovies();
     }
 
-    private void displayAllMovies() {
+    private List<Movie> getSortedMovies() {
         List<Movie> items = _model
                 .getAll()
                 .stream()
                 .sorted((m1, m2) -> Integer.compare(m1.getId(), m2.getId()))
                 .collect(Collectors.toList());
+        return items;
+    }
+
+    private void displayAllMovies() {
+        List<Movie> items = getSortedMovies();
         Movie firstOrDefault = items.stream().findFirst().orElse(null);
         _view.setItems(items);
         _selectedItem = firstOrDefault;
@@ -262,33 +257,88 @@ public class OscarAppPresenter implements Presenter {
     }
 
     private void displaySelectedItem() {
+        _view.setSelectedItem(_selectedItem);
         if (_selectedItem != null) {
-            _view.setSelectedItem(_selectedItem);
             _view.showMovieDetailPane();
-
-            _view.setPoster(_selectedItem.getId());
-            _view.setYear(_selectedItem.getYearOfAward());
-            _view.setTitle(_selectedItem.getTitle());
-            _view.setDirector(_selectedItem.getDirector());
-            _view.setDirectorHeading(String.format("von %s", _selectedItem.getDirector()));
-            _view.setMainActor(_selectedItem.getMainActor());
-            _view.setMainActorHeading(String.format("mit %s",_selectedItem.getMainActor()));
-            _view.setCountry(_selectedItem.getCountry());
-            _view.setNumberOfOscars(_selectedItem.getNumberOfOscars());
-            _view.setTitleEnglish(_selectedItem.getTitleEnglish());
-            _view.setGenre(_selectedItem.getGenre());
-            _view.setYearOfProduction(_selectedItem.getYearOfProduction());
-            _view.setDuration(_selectedItem.getDuration());
-            _view.setFsk(_selectedItem.getFsk());
-
-            try {
-                _view.setStartDate(_dateFormat.parse(_selectedItem.getStartDate()));
-            } catch (ParseException ex) {
-                _view.setStartDate(null);
-                // ToDo: Log exception and notify user
-            }
+            displayPoster();
+            displayYear();
+            displayTitle();
+            displayDirector();
+            displayMainActor();
+            displayTitleEnglish();
+            displayGenre();
+            displayYearOfProduction();
+            displayCountry();
+            displayDuration();
+            displayFsk();
+            displayStartDate();
+            displayNumberOfOscars();
         } else {
             _view.hideMovieDetailPane();
         }
+    }
+
+    private void displayPoster() {
+        _view.setPoster(_selectedItem.getId());
+    }
+
+    private void displayYear() {
+        _view.setYear(_selectedItem.getYearOfAward());
+    }
+
+    private void displayTitle() {
+        _view.setTitle(_selectedItem.getTitle());
+    }
+
+    private void displayDirector() {
+        _view.setDirector(_selectedItem.getDirector());
+        _view.setDirectorHeading(String.format("von %s", _selectedItem.getDirector()));
+    }
+
+    private void displayMainActor() {
+        _view.setMainActor(_selectedItem.getMainActor());
+        _view.setMainActorHeading(String.format("mit %s",_selectedItem.getMainActor()));
+    }
+
+    private void displayTitleEnglish() {
+        _view.setTitleEnglish(_selectedItem.getTitleEnglish());
+    }
+
+    private void displayGenre() {
+        _view.setGenre(_selectedItem.getGenre());
+    }
+
+    private void displayYearOfProduction() {
+        _view.setYearOfProduction(_selectedItem.getYearOfProduction());
+    }
+
+    private void displayCountry() {
+        _view.setCountry(_selectedItem.getCountry());
+    }
+
+    private void displayDuration() {
+        _view.setDuration(_selectedItem.getDuration());
+    }
+
+    private void displayFsk() {
+        _view.setFsk(_selectedItem.getFsk());
+    }
+
+    private void displayStartDate() {
+        try {
+            String date = _selectedItem.getStartDate();
+            if (date != null && !date.equals("")) {
+                _view.setStartDate(_dateFormat.parse(_selectedItem.getStartDate()));
+            } else {
+                _view.setStartDate(null);
+            }
+        } catch (ParseException ex) {
+            _view.setStartDate(null);
+            // ToDo: Log exception and notify user
+        }
+    }
+
+    private void displayNumberOfOscars() {
+        _view.setNumberOfOscars(_selectedItem.getNumberOfOscars());
     }
 }

@@ -202,9 +202,14 @@ public class OscarAppView extends GridPane implements View {
         _tableView.getSelectionModel().select(selectedItem);
     }
 
+    @Override
+    public void scrollToItem(Movie item) {
+        _tableView.scrollTo(item);
+    }
+
+
     private void initialize() {
         initializeComponent();
-        addEventHandlers();
         addValueChangeListeners();
     }
 
@@ -451,7 +456,7 @@ public class OscarAppView extends GridPane implements View {
         _splitPane.getItems().add(spMovie);
     }
 
-    private void addEventHandlers() {
+    private void addValueChangeListeners(){
         _tableView.getSelectionModel().selectedItemProperty().addListener((ov, oldValue, newValue) -> {
             int selectedMovieId = -1;
 
@@ -460,9 +465,6 @@ public class OscarAppView extends GridPane implements View {
             }
             _presenter.onSelectedItemChanged(selectedMovieId);
         });
-    }
-
-    private void addValueChangeListeners(){
         _spYear.getValueFactory().valueProperty()
                 .addListener((observable, oldValue, newValue) -> _presenter.onYearChanged(newValue));
         _tfTitle.textProperty().addListener((observable, oldValue, newValue) -> _presenter.onTitleChanged(newValue));
@@ -477,7 +479,13 @@ public class OscarAppView extends GridPane implements View {
                 .addListener((observable, oldValue, newValue) -> _presenter.onDurationChanged(newValue));
         _cbFSK.valueProperty().addListener((observable, oldValue, newValue) -> _presenter.onFskChanged(newValue));
         _dpStartDate.valueProperty()
-                .addListener((observable, oldValue, newValue) -> _presenter.onStartDateChanged(Date.from(newValue.atStartOfDay(ZoneId.systemDefault()).toInstant())));
+                .addListener((observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                    _presenter.onStartDateChanged(Date.from(newValue.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                    } else {
+                        _presenter.onStartDateChanged(null);
+                    }
+                });
         _spNumberOfOscars.getValueFactory().valueProperty()
                 .addListener((observable, oldValue, newValue) -> _presenter.onNumberOfOscarsChanged(newValue));
         _tfSearch.textProperty().addListener((observable, oldValue, newValue) -> _presenter.onSearchTextChanged(newValue));
