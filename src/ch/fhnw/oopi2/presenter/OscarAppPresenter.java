@@ -22,16 +22,16 @@ public class OscarAppPresenter implements Presenter {
 
     private Movie _selectedItem;
 
-    public OscarAppPresenter(View view, Model repository) {
+    public OscarAppPresenter(View view, Model model) {
 
         if (view == null)
             throw new IllegalArgumentException("Argument view cannot be null.");
 
-        if (repository == null)
-            throw new IllegalArgumentException("Argument repository cannot be null.");
+        if (model == null)
+            throw new IllegalArgumentException("Argument model cannot be null.");
 
         _view = view;
-        _model = repository;
+        _model = model;
 
         initialize();
     }
